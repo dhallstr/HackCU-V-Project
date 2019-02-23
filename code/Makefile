@@ -12,8 +12,8 @@ else
   LEAP_LIBRARY := ../lib/libLeap.dylib
 endif
 
-main: main.cpp
-	$(CXX) -Wall -g -I../include main.cpp -o main $(LEAP_LIBRARY)
+main: main.cc
+	$(CXX) -Wall -g -I../include main.cc -o main $(LEAP_LIBRARY)
 ifeq ($(OS), Darwin)
 	install_name_tool -change @loader_path/libLeap.dylib ../lib/libLeap.dylib main
 endif
