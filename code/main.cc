@@ -1,9 +1,12 @@
 #include <iostream>
 #include <cstring>
+#include <vector>
 #include "Leap.h"
 
 using namespace std;
 using namespace Leap;
+
+static int mode = 0;
 
 class EventListener : public Listener {
   public:
@@ -47,6 +50,9 @@ void EventListener::onExit(const Controller& controller) {
 }
 
 void EventListener::onFrame(const Controller& controller) {
+  static vector<FingerList> currentGesture;
+  if (mode == 0)
+    return;
   // Get the most recent frame and report some basic information
   const Frame frame = controller.frame();
   /*cout << "Frame id: " << frame.id()
@@ -81,6 +87,9 @@ void EventListener::onFrame(const Controller& controller) {
 
     // Get fingers
     const FingerList fingers = hand.fingers();
+    currentGesture.push_back(fingers);
+    if(currentGesture.size() == 50)
+      currentGesture.erase(currentGesture.begin());
     for (FingerList::const_iterator fl = fingers.begin(); fl != fingers.end(); ++fl) {
       const Finger finger = *fl;
       cout << string(4, ' ') <<  fingerNames[finger.type()]
@@ -125,7 +134,7 @@ void EventListener::onDeviceChange(const Controller& controller) {
 
   for (int i = 0; i < devices.count(); ++i) {
     cout << "id: " << devices[i].toString() << endl;
-    cout << "  isStreaming: " << (devices[i].isStreaming() ? "true" : "false") << endl;
+    cout << "isStreaming: " << (devices[i].isStreaming() ? "true" : "false") << endl;
   }
 }
 
@@ -142,16 +151,39 @@ int main(int argc, char** argv) {
   EventListener listener;
   Controller controller;
 
-  // Have the sample listener receive events from the controller
+  // Have the listener receive events from the controller
   controller.addListener(listener);
 
   if (argc > 1 && strcmp(argv[1], "--bg") == 0)
     controller.setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
 
-  // Keep this process running until Enter is pressed
-  cout << "Press Enter to quit..." << endl;
-  cin.get();
+  bool running = true;
+  while (running)
+  {
+    int command = 0;
+    cout << "0. exit \t 1. run \t 2. stop\t3. train" << endl;
+    cin >> command;
+    switch(command)
+    {
+      case 0:
+        running = false;
+      break;
+      case 1:
+        mode = 1;
+        cout << "Running!" << endl;
+      break;
+      case 2:
+        mode = 0;
+        cout << "Stopping!" << endl;
+      break;
+      case 3:
+        mode = 2;
+        cout << "Training!" << endl;
+      break;
+    }
+  }
 
+  cout << "Exiting..." << endl;
   // Remove the sample listener when done
   controller.removeListener(listener);
 
