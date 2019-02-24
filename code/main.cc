@@ -103,7 +103,14 @@ void EventListener::onFrame(const Controller& controller) {
   if(DEBUG > 1) cout << "[Listener] " << handType << " pos: " << hand.palmPosition() << ", extended fingers: " << hand.fingers().extended().count() << endl;
 
   // Get fingers
-  sensitivity_t s = {50, 60, 0.6};
+  sensitivity_t s = {55, 65, 0.63};
+
+  // Clear timed out modifiers
+  if(commStr.size() > 0 && last_call + 4000 < currTime())
+  {
+    commStr = "";
+    cout << "[Listener] Cleared command modifier." << endl;
+  }
 
   if(mode == 1) // normal operation
   {
@@ -114,11 +121,11 @@ void EventListener::onFrame(const Controller& controller) {
       if(DEBUG > 1) cout << "[Listener] Signal " << i << ": match? ";
       int errorCode = 0;
       bool success = h.matchesSignal(hand, errorCode);
+      string nextPart = gestureCollection.getCommand(i);
       if(DEBUG > 1) cout << " " << (success ? "Yes" : "No") << ", code:  " << errorCode << endl;
-      if(success && ((last_call + 200 < currTime() && last_command_id != i) || (last_call + 2000 < currTime())))
+      if(success && ((last_call + 300 < currTime() && last_command_id != i) || (last_call + 2000 < currTime())) && (commStr.size() == 0 || nextPart[0] != '$'))
       {
         cout << "[Listener] Gesture " << gestureCollection.getName(i) << " triggered!" << endl;
-        string nextPart = gestureCollection.getCommand(i);
         if (nextPart[0] == '$' && last_command_id != i) // just a modifier
         {
           commStr += nextPart.substr(1) + "_";
@@ -137,6 +144,7 @@ void EventListener::onFrame(const Controller& controller) {
           else
             cout << "Ran command " << commStr <<  "!" << endl;
           commStr = "";
+          last_call += 500;
           return;
         }
       }
