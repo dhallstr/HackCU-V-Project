@@ -143,7 +143,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
                 }
                 else if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) > settings.positionDiff) {
                     errorcode = 5;
-                    cout << "endDiff = " << boneEnds[i][b][w] - (bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " > " << settings.positionDiff << " and new bone pos is " << bone.nextJoint()[w] << " ";
+                    cout << "endDiff = " << boneEnds[i][b][w] - (bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " > " << settings.positionDiff << " and new bone pos is " << bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w] << " ";
                 }
                 else if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) > settings.directionDiff) {
                     errorcode = 6;
