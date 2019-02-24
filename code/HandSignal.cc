@@ -9,9 +9,9 @@ using namespace std;
 
 
 
-HandSignal::HandSignal(const vector<const FingerList> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
+HandSignal::HandSignal(const vector<FingerList> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
     
-HandSignal::HandSignal(const vector<const FingerList> &list) {
+HandSignal::HandSignal(const vector<FingerList> &list) {
     if (list.size() > 20) {
         fingers = 0;
         return;
