@@ -1,0 +1,22 @@
+<html>
+<head>
+  <title>Home </title>
+
+  <script type="text/javascript">
+    function init()
+    {
+      var ws = new WebSocket("ws://localhost:9001/");
+      ws.onmessage = function(e) {
+        log.innerHTML += e.data;
+      };
+    }
+  </script>
+
+</head>
+
+<body onload="init();">
+  <h1>Yay!</h1>
+  <div id="log"></div>
+</body>
+
+</html>
