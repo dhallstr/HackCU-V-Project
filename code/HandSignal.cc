@@ -106,7 +106,6 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
     }
     int i = 0;
     Vector first = hand.palmPosition();
-    float offset[] = {-first.x, -first.y, -first.z};
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
@@ -117,12 +116,12 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
             for (int w = 0; w < 2; w++) {
-                if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] + offset[w]) > settings.positionDiff) {
+                if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w] > settings.positionDiff) {
                     errorcode = 4;
                     cout << fingerNames[fingerTypes[i]];
                     return false;
                 }
-                if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] + offset[w]) > settings.positionDiff) {
+                if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) > settings.positionDiff) {
                     errorcode = 5;
                     cout << fingerNames[fingerTypes[i]];
                     return false;
