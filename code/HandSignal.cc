@@ -124,7 +124,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
                 errorcode = 7;
                 return false;
         }
-        if (!fingerExtended()) continue; // we don't care about position of non-extended fingers
+        if (!finger.isExtended()) continue; // we don't care about position of non-extended fingers
         // Finger length
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
             errorcode = 3;
