@@ -12,7 +12,7 @@ using namespace std;
 HandSignal::HandSignal(const vector<const FingerList> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
     
 HandSignal::HandSignal(const vector<const FingerList> &list) {
-    if (list.length() > 20) {
+    if (list.size() > 20) {
         fingers = 0;
         return;
     }
@@ -23,7 +23,7 @@ HandSignal::HandSignal(const vector<const FingerList> &list) {
             return;
         }
         int i = 0;
-        for (FingerList::const_iterator fl_iter = fingers.begin(); fl_iter != fingers.end(); ++fl_iter, i++) {
+        for (FingerList::const_iterator fl_iter = fl.begin(); fl_iter != fl.end(); ++fl_iter, i++) {
             const Finger finger = *fl_iter;
             fingerTypes[i] = finger.type();
             fingerLengths[i] += finger.length();
@@ -74,7 +74,7 @@ bool HandSignal::matchesSignal(const FingerList &curr_fingers, int &errorcode) c
         errorcode = 1;
         return false;
     }
-    else if (curr_fingers.count != fingers) {
+    else if (curr_fingers.count() != fingers) {
         errorcode = 2;
         return false;
     }
