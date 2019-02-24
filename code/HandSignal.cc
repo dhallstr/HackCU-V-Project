@@ -120,13 +120,11 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
         
-        if (!finger.isExtended()) {
-            if (fingerExtended[i]) {
+        if (finger.isExtended() != fingerExtended[i]) { // if the finger extended status is not the same, it's not the same signal
                 errorcode = 7;
                 return false;
-            }
-            continue;
         }
+        if (!fingerExtended()) continue; // we don't care about position of non-extended fingers
         // Finger length
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
             errorcode = 3;
@@ -145,7 +143,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
                 }
                 else if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) > settings.positionDiff) {
                     errorcode = 5;
-                    cout << "endDiff = " << boneEnds[i][b][w] - (bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " > " << settings.positionDiff << " ";
+                    cout << "endDiff = " << boneEnds[i][b][w] - (bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " > " << settings.positionDiff << " and new bone pos is " << " ";
                 }
                 else if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) > settings.directionDiff) {
                     errorcode = 6;
