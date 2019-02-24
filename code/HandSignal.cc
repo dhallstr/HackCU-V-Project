@@ -9,10 +9,15 @@ using namespace std;
 
 
 
-HandSignal::HandSignal(const vector<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
+HandSignal::HandSignal(const queue<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
 
-HandSignal::HandSignal(const vector<Hand> &list) {
+HandSignal::HandSignal(const queue<Hand> &list) {
     cout << "[HandSignal] handSignal ctor called!" << endl;
+    if (list.size() == 0) {
+        cout << "[HandSignal] ERROR: no Hands passed" << endl;
+        fingers = 0;
+        return;
+    }
     if (list[0].fingers().count() > 20) {
         fingers = 0;
         return;

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstring>
-#include <vector>
+#include <queue>
 
 #include "Leap.h"
 #include "main.h"
@@ -21,8 +21,8 @@ typedef struct sensitivityConfig_s {
 class HandSignal {
     public:
         HandSignal() { std::cout << "[HandSignal] Ctor called with no args!!" << std::endl;}
-        HandSignal(const std::vector<Leap::Hand> &list);
-        HandSignal(const std::vector<Leap::Hand> &list, sensitivity_t config);
+        HandSignal(const std::queue<Leap::Hand> &list);
+        HandSignal(const std::queue<Leap::Hand> &list, sensitivity_t config);
         HandSignal(const HandSignal &other);
 
         bool matchesSignal(const Leap::Hand &curr_fingers, int &errorcode) const;
