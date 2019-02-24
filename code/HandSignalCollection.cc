@@ -30,7 +30,9 @@ HandSignalCollection::HandSignalCollection() {
                 commands.push_back(line);
 
                 f >> hs.fingers;
-
+                
+                f >> settings.fingerLengthDiff >> settings.positionDiff >> settings.directionDiff;
+                
                 for (int j = 0; j < hs.fingers; j++) {
                     int x;
                     f >> x;
