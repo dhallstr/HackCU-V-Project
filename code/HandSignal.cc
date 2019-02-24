@@ -116,7 +116,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
             for (int w = 0; w < 2; w++) {
-                if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w] > settings.positionDiff) {
+                if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) > settings.positionDiff) {
                     errorcode = 4;
                     cout << fingerNames[fingerTypes[i]];
                     return false;
