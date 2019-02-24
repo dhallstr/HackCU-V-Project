@@ -1,22 +1,159 @@
 <html>
 <head>
-  <title>Home </title>
-
-  <script type="text/javascript">
+  <title>Home Automation Demo</title>
+</head>
+<body onload="init();">
+    <canvas id="home-demo" style="padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;">HTML Canvas is not suppported by your browser. Please use Google Chrome or Firefox.</canvas>
+    <script type="text/javascript">
+    var canvas=document.getElementById('home-demo');
+    if(!canvas.getContext){
+        throw {message:'Error: canvas not supported', name:'CanvasNotSupportedException'};
+    }
+    var FPS=25,
+        WINDOWWIDTH=968,
+        WINDOWHEIGHT=660;
+    canvas.width=	WINDOWWIDTH;
+    canvas.style.width=WINDOWWIDTH;
+    canvas.height=WINDOWHEIGHT;
+    canvas.style.height=WINDOWHEIGHT;
+    var ctx=canvas.getContext('2d');
+    var BOXSIZE=20,
+        BOARDWIDTH=10,
+        BOARDHEIGHT=20,
+        BLANK='.',
+        MOVESIDEWAYSFREQ=150,
+        MOVEDOWNFREQ=100,
+        XMARGIN=parseInt((WINDOWWIDTH-BOARDHEIGHT*BOXSIZE)/2),
+        TOPMARGIN=WINDOWHEIGHT-(BOARDHEIGHT*BOXSIZE)-5,
+        WHITE='rgb(255,255,255)',
+        GRAY='rgb(185, 185, 185)',
+        DARKGRAY='rgb(100, 100, 100',
+        LIGHTGRAY='rgb(235, 235, 235)',
+        BLACK='rgb(0,0,0)',
+        RED='rgb(255,0,0)',
+        LIGHTRED='rgb(175, 20, 20)',
+        GREEN='rgb(0, 155, 0)',
+        LIGHTGREEN='rgb(20, 175, 20)',
+        BLUE='rgb(0, 0, 155)',
+        LIGHTBLUE='rgb(60, 60, 245)',
+        YELLOW='rgb(155, 155, 0)',
+        LIGHTYELLOW='rgb(175, 175, 20)',
+        PURPLE='rgb(104, 8, 168)',
+        LIGHTPURPLE='rgb(93, 58, 100)',
+        ORANGE='rgb(205, 102, 0)',
+        LIGHTORANGE='rgb(255, 165, 0)',
+        BORDERCOLOR=GRAY,
+        BGCOLOR=LIGHTGRAY,
+        TEXTCOLOR=WHITE,
+        PLAYERTEXTCOLOR=LIGHTYELLOW,
+        TEXTSHADOWCOLOR=GRAY;
+              
+    var BIGFONT='100px Georgia';
+    var FONT='18px Georgia';
+    function main(){
+        frame();
+    }
+    function frame(){
+       fillScreen(BGCOLOR);
+       drawRoom();
+       setTimeout(frame,1000/FPS);
+    }
+    function fillScreen(color){
+        ctx.fillStyle=color;
+        ctx.fillRect(0,0,WINDOWWIDTH,WINDOWHEIGHT);
+    }
+    function text(txt,size,x,y,color,align){
+        if(align==undefined)align='center';
+        drawText(txt,size+'px Georgia',color,x,y);
+    }
+    function bigText(txt,color,x,y,align){
+        if(align==undefined)align='center';
+        if(x==undefined)x=WINDOWWIDTH/2;
+        if(y==undefined)y=WINDOWHEIGHT/2;
+        drawText(txt,BIGFONT,color,x,y,align);
+    }
+    function smallText(txt,color,x,y,align){
+        if(align==undefined)align='center';
+        if(x==undefined)x=WINDOWWIDTH/2;
+        if(y==undefined)y=WINDOWHEIGHT/2;
+        drawText(txt,FONT,color,x,y,align);
+    }
+    function drawText(txt,font,color,x,y,align){
+        ctx.textAlign=align;
+        ctx.fillStyle=color;
+        ctx.font=font;
+        ctx.fillText(txt,x,y);
+    }
+    function drawRect(color,x,y,width,height,nofill){
+        if(nofill){
+            ctx.strokeStyle=color;
+            ctx.lineWidth=nofill;
+            ctx.strokeRect(x,y,width,height);
+        }
+        else{
+            ctx.fillStyle=color;
+            ctx.fillRect(x,y,width,height);
+        }
+    }
+    function drawTexturedRect(maincolor, shadowcolor, x,y,width,height,offset=-6) {
+        if (offset < 0) {
+            drawRect(shadowcolor, x + offset, y + offset, width - offset, height - offset, false);
+        }
+        else {
+            drawRect(shadowcolor, x, y, width + offset, height + offset, false);
+        }
+        drawRect(maincolor, x, y, width, height, false);
+    }
+    function drawRoom() {
+        drawRoomBase();
+    }
+    var doorOpen = false;
+    function drawRoomBase()  {
+        
+        drawRect(BORDERCOLOR, 90, 18, WINDOWWIDTH - 90 * 2 - 110 - 45, 18, false);// upper wall
+        drawRect(BORDERCOLOR, WINDOWWIDTH - 90 - 45, 18, 45, 18, false);
+        
+        drawRect(BORDERCOLOR, 90, WINDOWHEIGHT - 18 - 18, WINDOWWIDTH - 180, 18, false);// bottom wall
+        
+        drawRect(BORDERCOLOR, 90, 18, 18, WINDOWHEIGHT - 18 * 2, false); // left wall
+        
+        drawRect(BORDERCOLOR, WINDOWWIDTH - 90 - 18, 18, 18, WINDOWHEIGHT - 18 * 2, false); // right wall
+        
+        drawTexturedRect(LIGHTORANGE, ORANGE, WINDOWWIDTH/2-110, WINDOWHEIGHT/2-65, 110*2, 65*2); // coffee table
+        
+        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115, WINDOWHEIGHT - 18*2-120, 115*2, 110, 6); // couch
+        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115 + 18, WINDOWHEIGHT - 18*2-18 - 10, 115*2 - 18*2, 18, -6);
+        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115, WINDOWHEIGHT - 18*2-120, 18, 110, 4);
+        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2+115-18+4, WINDOWHEIGHT - 18*2-120+4, 18, 110, -4);
+        
+        ctx.strokeStyle=DARKGRAY;
+        ctx.lineCap = "butt";
+        ctx.lineWidth = 10;
+        ctx.moveTo(WINDOWWIDTH-90-45, 18 + 9);// door
+        if (doorOpen) {
+            ctx.lineTo(WINDOWWIDTH - 90 - 45 - 78, 18 + 78 + 9);
+        }
+        else {
+            ctx.lineTo(WINDOWWIDTH - 90 - 45 - 110, 18 + 9);
+        }
+        ctx.closePath();
+        ctx.stroke();
+    }
+    
     function init()
     {
       var ws = new WebSocket("ws://localhost:9001/");
       ws.onmessage = function(e) {
-        log.innerHTML += e.data;
+        var v = e.data;
+        console.log(v)
+        if(v == "openDoor")
+            doorOpen = true;
+        else if(v == "closeDoor")
+            doorOpen = false;
       };
+      main();
     }
   </script>
-
-</head>
-
-<body onload="init();">
-  <h1>Yay!</h1>
-  <div id="log"></div>
 </body>
-
 </html>
+
