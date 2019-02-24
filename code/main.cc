@@ -92,7 +92,7 @@ void EventListener::onFrame(const Controller& controller) {
   // Get the first hand
   const Hand hand = *hands.begin();
   string handType = hand.isLeft() ? "Left hand" : "Right hand";
-  cout << string(2, ' ') << handType << " pos: " << hand.palmPosition() << ", extended fingers: " << hand.fingers().extended().count() << endl;
+  cout << "[Listener] " << handType << " pos: " << hand.palmPosition() << ", extended fingers: " << hand.fingers().extended().count() << endl;
   // Get the hand's normal vector and direction
   //const Vector normal = hand.palmNormal();
   //const Vector direction = hand.direction();
@@ -102,25 +102,27 @@ void EventListener::onFrame(const Controller& controller) {
             << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << endl;*/
 
   // Get fingers
-  HandSignal h;
-  currentGesture.clear();
+  sensitivity_t s = {20, 50, 0.5};
+  static HandSignal h;
+  //currentGesture.clear();
   currentGesture.push_back(hand);
-  //if(currentGesture.size() == 50) // keep the vector at size 50
-  //  currentGesture.erase(currentGesture.begin());
+  if(currentGesture.size() == 50) // keep the vector at size 50
+    currentGesture.erase(currentGesture.begin());
 
   if(mode == 1) // normal operation
   {
     int errorCode;
     // send the hand be to processed
+    cout << "[Listener] Match? ";
     bool success = h.matchesSignal(hand, errorCode);
-    cout << "[Listener] Match? " << success << " : " << errorCode << endl;
+    cout << " " << success << " : " << errorCode << endl;
   }
   else if(mode == 2)
   {
     // Send the vector to train
     cout << "[Listener] Sending training vector!" << endl;
     cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
-    h = HandSignal(currentGesture);
+    h = HandSignal(currentGesture, s);
       cout << "[Listener] HandSignal is:\n" << h << endl;
       mode = 0; // exit training mode
   }
