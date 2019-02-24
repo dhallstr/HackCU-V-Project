@@ -48,24 +48,31 @@ HandSignal::HandSignal(const Hand &hand) {
         fingerTypes[i] = finger.type();
         fingerExtended[i] = finger.isExtended();
         fingerLengths[i] += finger.length();
-        float offset[] = {0, 0, 0};
         for (int b = 0; b < 4; ++b) {
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
-
-            if (b == 0) {
-                offset[0] = bone.prevJoint().x;
-                offset[1] = bone.nextJoint().y;
-                offset[2] = bone.direction().z;
-            }
 
             for (int w = 0; w < 3; w++) {
                 boneStarts[i][b][w] = bone.prevJoint()[w];
                 boneEnds[i][b][w] = bone.nextJoint()[w];
                 boneDirs[i][b][w] = bone.direction()[w];
-
-                boneStarts[i][b][w] -= offset[w];
-                boneEnds[i][b][w] -= offset[w];
+            }
+        }
+    }
+    
+    float offset[20][3];
+    for (i = 0; i < fingers; i++) {
+        for (int w = 0; w < 3; w++) {
+            offset[i][w] = boneStarts[i][0][w];
+        }
+    }
+    
+    for (i = 0; i < fingers; i++) {
+        for (int b = 0; b < 4; b++) {
+            for (int w = 0; w < 3; w++) {
+                boneStarts[i][b][w] -= offset[i][w];
+                boneEnds[i][b][w] -= offset[i][w];
+                boneDirs[i][b][w] -= offset[i][w];
             }
         }
     }
