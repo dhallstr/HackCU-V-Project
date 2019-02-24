@@ -109,6 +109,7 @@ void EventListener::onFrame(const Controller& controller) {
       if(success)
       {
         cout << "[Listener] Gesture " << gestureCollection.getName(i) << " triggered!" << endl;
+        sleep(1);
       }
       i++;
     }
@@ -202,7 +203,8 @@ int main(int argc, const char* argv[])
       string target = "";
 
       cin >> target;
-      cout << target << endl;
+      string success = gestureCollection.remove(target) ? "Removed " : "Couldn't find ";
+      cout << success << target << endl;
     }
     else if (command.compare("list") == 0)
     {
