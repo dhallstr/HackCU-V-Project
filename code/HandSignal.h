@@ -24,7 +24,7 @@ class HandSignal {
         
         bool matchesSignal(const Leap::FingerList &curr_fingers, int &errorcode) const;
         bool isValid() const;
-        friend ostream &operator<<(ostream &os, const HandSignal &hs);
+        friend std::ostream &operator<<(std::ostream &os, const HandSignal &hs);
         
     private:
         int fingers;
