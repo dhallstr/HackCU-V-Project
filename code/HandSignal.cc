@@ -83,7 +83,7 @@ bool HandSignal::matchesSignal(const FingerList &curr_fingers, int &errorcode) c
     float offset[] = {-first.x, -first.y, -first.z};
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
-        if (percentDiff(fingerLengths[i], finger.length()) > settings.fingerLengthPercent) {
+        if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
             return false;
         }
         for (int b = 0; b < 4; ++b) {
