@@ -3,13 +3,15 @@
   <title>Home Automation Demo</title>
 </head>
 <body onload="init();">
+<img id="source"
+       src="images/off.png"/>
     <canvas id="home-demo" style="padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;">HTML Canvas is not suppported by your browser. Please use Google Chrome or Firefox.</canvas>
     <script type="text/javascript">
     var canvas=document.getElementById('home-demo');
     if(!canvas.getContext){
         throw {message:'Error: canvas not supported', name:'CanvasNotSupportedException'};
     }
-    var FPS=25,
+    var FPS=1,
         WINDOWWIDTH=968,
         WINDOWHEIGHT=660;
     canvas.width=	WINDOWWIDTH;
@@ -54,6 +56,7 @@
         frame();
     }
     function frame(){
+        ctx.clearRect(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
        fillScreen(BGCOLOR);
        drawRoom();
        setTimeout(frame,1000/FPS);
@@ -122,22 +125,27 @@
         drawTexturedRect(LIGHTORANGE, ORANGE, WINDOWWIDTH/2-110, WINDOWHEIGHT/2-65, 110*2, 65*2); // coffee table
         
         drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115, WINDOWHEIGHT - 18*2-120, 115*2, 110, 6); // couch
-        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115 + 18, WINDOWHEIGHT - 18*2-18 - 10, 115*2 - 18*2, 18, -6);
-        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115, WINDOWHEIGHT - 18*2-120, 18, 110, 4);
-        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2+115-18+4, WINDOWHEIGHT - 18*2-120+4, 18, 110, -4);
+        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115 + 18, WINDOWHEIGHT - 18*2-18 - 10, 115*2 - 18*2, 18+7, -6);
+        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2-115, WINDOWHEIGHT - 18*2-120 - 4, 18, 110 + 4, 4);
+        drawTexturedRect(LIGHTBLUE, BLUE, WINDOWWIDTH/2+115-18+4, WINDOWHEIGHT - 18*2-120+4 - 4, 18, 110 + 4, -4);
         
+        ctx.beginPath();
         ctx.strokeStyle=DARKGRAY;
         ctx.lineCap = "butt";
         ctx.lineWidth = 10;
         ctx.moveTo(WINDOWWIDTH-90-45, 18 + 9);// door
+        console.log(doorOpen);
         if (doorOpen) {
             ctx.lineTo(WINDOWWIDTH - 90 - 45 - 78, 18 + 78 + 9);
+            console.log("draw open");
         }
         else {
             ctx.lineTo(WINDOWWIDTH - 90 - 45 - 110, 18 + 9);
+            console.log("draw closed");
         }
         ctx.closePath();
         ctx.stroke();
+        smallText(doorOpen ? "Unlocked" : "Locked", BLACK, WINDOWWIDTH - 90 - 45 - 65 - 20, 18 + 40, 'center');
     }
     
     function init()
