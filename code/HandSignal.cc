@@ -9,10 +9,7 @@ using namespace std;
 
 
 
-HandSignal::HandSignal(const vector<Hand> &list, sensitivity_t config) : HandSignal(list)
-{
-  settings = config;
-}
+HandSignal::HandSignal(const vector<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
 
 HandSignal::HandSignal(const vector<Hand> &list) {
     cout << "[HandSignal] handSignal ctor called!" << endl;
@@ -20,9 +17,9 @@ HandSignal::HandSignal(const vector<Hand> &list) {
         fingers = 0;
         return;
     }
-    
+
     fingers = list[0].fingers().count();
-    
+
     for (int i = 0; i < fingers; i++) {
         fingerLengths[i] = 0;
         fingerExtended[i] = false;
@@ -34,14 +31,14 @@ HandSignal::HandSignal(const vector<Hand> &list) {
             }
         }
     }
-    
-    
+
+
     int ind = -1;
     for (Hand hand : list) {
         ind++;
         FingerList fl = hand.fingers();
         if (fl.count() != fingers) {
-            cout << "Error: inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
+            cout << "[ERROR] inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
             fingers = 0;
             return;
         }
@@ -90,6 +87,27 @@ HandSignal::HandSignal(const vector<Hand> &list) {
     }
 }
 
+HandSignal::HandSignal(const HandSignal &other) : fingers(other.fingers), settings(other.settings)
+{
+  cout << "[HandSignal] Copy ctor called!" << endl;
+  for(int i = 0; i < 20; i++)
+  {
+    fingerLengths[i] = other.fingerLengths[i];
+    if(&(fingerLengths[0]) == &(other.fingerLengths[0]))
+      cout << "[ERROR] BAD!" << endl;
+    fingerExtended[i] = other.fingerExtended[i];
+    for(int b = 0; b < 4; b++)
+    {
+      for(int w = 0; w < 3; w++)
+      {
+        boneStarts[i][b][w] = other.boneStarts[i][b][w];
+        boneEnds[i][b][w] = other.boneEnds[i][b][w];
+        boneDirs[i][b][w] = other.boneDirs[i][b][w];
+      }
+    }
+  }
+}
+
 ostream &operator<<(ostream &os, const HandSignal &hs) {
     if (hs.fingers == 0) return os << "Invalid HandSignal";
 
@@ -133,7 +151,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
     // Each finger
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
-        
+
         if (finger.isExtended() != fingerExtended[i]) { // if the finger extended status is not the same, it's not the same signal
                 errorcode = 7;
                 return false;

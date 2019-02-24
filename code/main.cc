@@ -10,6 +10,7 @@ using namespace std;
 using namespace Leap;
 
 static int mode = 0;
+static vector<HandSignal> gestureBank;
 
 ostream &operator<<(ostream &o, const FingerList &fingers)
 {
@@ -75,7 +76,6 @@ void EventListener::onExit(const Controller& controller) {
 }
 
 void EventListener::onFrame(const Controller& controller) {
-  static vector<Hand> currentGesture;
   if (mode == 0)
     return;
   // Get the most recent frame and report some basic information
@@ -89,6 +89,8 @@ void EventListener::onFrame(const Controller& controller) {
 
   //cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
   HandList hands = frame.hands();
+  if(hands.count() < 1)
+    return;
   // Get the first hand
   const Hand hand = *hands.begin();
   string handType = hand.isLeft() ? "Left hand" : "Right hand";
@@ -102,29 +104,33 @@ void EventListener::onFrame(const Controller& controller) {
             << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << endl;*/
 
   // Get fingers
-  sensitivity_t s = {20, 50, 0.5};
-  static HandSignal h;
-  //currentGesture.clear();
+  sensitivity_t s = {40, 60, 0.6};
+  static vector<Hand> currentGesture;
   currentGesture.push_back(hand);
   if(currentGesture.size() == 50) // keep the vector at size 50
     currentGesture.erase(currentGesture.begin());
 
   if(mode == 1) // normal operation
   {
-    int errorCode;
-    // send the hand be to processed
-    cout << "[Listener] Match? ";
-    bool success = h.matchesSignal(hand, errorCode);
-    cout << " " << success << " : " << errorCode << endl;
+    for(HandSignal h : gestureBank)
+    {
+      // send the hand be to processed
+      cout << "[Listener] Match? ";
+      int errorCode = 0;
+      string success = (h.matchesSignal(hand, errorCode)) ? "Yes" : "No" ;
+      cout << " " << success << ", code:  " << errorCode << endl;
+    }
   }
   else if(mode == 2)
   {
     // Send the vector to train
     cout << "[Listener] Sending training vector!" << endl;
     cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
-    h = HandSignal(currentGesture, s);
-      cout << "[Listener] HandSignal is:\n" << h << endl;
-      mode = 0; // exit training mode
+    HandSignal h(currentGesture, s);
+    gestureBank.clear();
+    gestureBank.push_back(h);
+    cout << "[Listener] HandSignal is:\n" << h << endl;
+    mode = 0; // exit training mode
   }
 }
 
@@ -141,8 +147,8 @@ void EventListener::onDeviceChange(const Controller& controller) {
   const DeviceList devices = controller.devices();
 
   for (int i = 0; i < devices.count(); ++i) {
-    cout << "\tid: " << devices[i].toString() << endl;
-    cout << "\tStreaming: " << (devices[i].isStreaming() ? "true" : "false") << endl;
+    cout << "[Controller] ID: " << devices[i].toString();
+    cout << ", Streaming: " << (devices[i].isStreaming() ? "true" : "false") << endl;
   }
 }
 
@@ -161,14 +167,14 @@ int main(int argc, char** argv) {
 
   // Have the listener receive events from the controller
   controller.addListener(listener);
-  //controller.setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
 
   bool running = true;
   while (running)
   {
     int command = 0;
-    cout << "0. exit \t 1. run \t 2. stop\t3. train" << endl;
+    cout << "\t\t0. exit \t 1. run \t 2. train" << endl;
     cin >> command;
+    cin.get();
     switch(command)
     {
       case 0:
@@ -177,19 +183,17 @@ int main(int argc, char** argv) {
       case 1:
         mode = 1;
         cout << "[System] Running!" << endl;
+        cin.get();
+        mode = 0;
       break;
       case 2:
-        mode = 0;
-        cout << "[System] Stopping!" << endl;
-      break;
-      case 3:
         cout << "[System] Training..." << endl;
         sleep(1);
         mode = 2;
         while(mode == 2);
-        cout << "[System] Trained!" << endl;
       break;
     }
+    cout << "[System] Done!" << endl;
   }
 
   cout << "[System] Exiting..." << endl;
