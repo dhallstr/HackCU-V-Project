@@ -178,8 +178,8 @@ bool HandSignalCollection::remove(std::string &name) {
 
 int HandSignalCollection::getNumFingers(int i) const {
     int numFingers = 0;
-    for (int j = 0; j < hsc.signals[i].fingers; j++) {
-        if (hsc.signals[i].fingerExtended[j]) numFingers++;
+    for (int j = 0; j < signals[i].fingers; j++) {
+        if (signals[i].fingerExtended[j]) numFingers++;
     }
     return numFingers;
 }
