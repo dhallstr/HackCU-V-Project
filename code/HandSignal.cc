@@ -56,8 +56,8 @@ HandSignal::HandSignal(const vector<Hand> &list) {
                     boneStarts[i][b][w] /= list.size();
                     boneEnds[i][b][w] /= list.size();
                     boneDirs[i][b][w] /= list.size();
-                    boneStarts[i][b][w] -= boneStarts[0][0][w];
-                    boneEnds[i][b][w] -= boneStarts[0][0][w];
+                    boneStarts[i][b][w] -= list[0].palmPosition()[w];
+                    boneEnds[i][b][w] -= list[0].palmPosition()[w];
                 }
             }
         }
