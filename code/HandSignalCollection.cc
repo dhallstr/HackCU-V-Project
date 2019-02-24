@@ -176,17 +176,21 @@ bool HandSignalCollection::remove(std::string &name) {
     return false;
 }
 
+int HandSignalCollection::getNumFingers(int i) const {
+    int numFingers = 0;
+    for (int j = 0; j < hsc.signals[i].fingers; j++) {
+        if (hsc.signals[i].fingerExtended[j]) numFingers++;
+    }
+    return numFingers;
+}
+
 std::string HandSignalCollection::getName(int i) {
   return names[i];
 }
 
 ostream &operator<<(ostream &os, const HandSignalCollection &hsc) {
     for (int i = 0; i < hsc.signals.size(); i++) {
-        int numFingers = 0;
-        for (int j = 0; j < hsc.signals[i].fingers; j++) {
-            if (hsc.signals[i].fingerExtended[j]) numFingers++;
-        }
-        os << "Signal " << i << ": " << hsc.names[i] << " (" << numFingers << " fingers)\n";
+        os << "Signal " << i << ": " << hsc.names[i] << " (" << hsc.getNumFingers(i) << " fingers)\n";
     }
     return os;
 }

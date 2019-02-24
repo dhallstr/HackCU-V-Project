@@ -16,6 +16,7 @@ class HandSignalCollection {
       friend int main(int argc, const char* argv[]);
 
     private:
+      int getNumFingers(int i) const;
       std::vector<HandSignal> signals;
       std::vector<std::string> names;
       std::vector<std::string> commands;
