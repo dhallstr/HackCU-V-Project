@@ -21,7 +21,7 @@ HandSignalCollection::HandSignalCollection() {
             int num;
             f >> num;
             for (int i = 0; i < num; i++) {
-                HandSignal &hs = signals[i];
+                HandSignal hs;
                 string line;
                 getline(f, line);// remove extra \n char
                 getline(f, line);// read in signal name
@@ -68,6 +68,7 @@ HandSignalCollection::HandSignalCollection() {
                         }
                     }
                 }
+                signals.push_back(hs);
             }
             if (!f) {
                 if (DEBUG) cout << "[HandSignalCollection] error: trained_signals.gs format invalid! Signal data may be corrupted!" << endl;

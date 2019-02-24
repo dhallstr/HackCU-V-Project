@@ -20,7 +20,7 @@ typedef struct sensitivityConfig_s {
 
 class HandSignal {
     public:
-        HandSignal() { std::cout << "[HandSignal] Ctor called with no args!!" << std::endl;}
+        HandSignal() = default;
         HandSignal(const std::deque<Leap::Hand> &list);
         HandSignal(const std::deque<Leap::Hand> &list, sensitivity_t config);
         HandSignal(const HandSignal &other);
@@ -29,6 +29,7 @@ class HandSignal {
         bool isValid() const;
         friend std::ostream &operator<<(std::ostream &os, const HandSignal &hs);
         friend class HandSignalCollection;
+        friend HandSignalCollection::HandSignalCollection();
 
     private:
         int fingers;
