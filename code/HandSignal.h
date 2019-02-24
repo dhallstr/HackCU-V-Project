@@ -4,7 +4,9 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+
 #include "Leap.h"
+#include "main.h"
 
 typedef struct sensitivityConfig_s {
 

@@ -47,10 +47,6 @@ typedef unsigned __int64 uint64_t;
 
 namespace Leap {
 
-  const std::string fingerNames[] = {"Thumb", "Index", "Middle", "Ring", "Pinky"};
-  const std::string boneNames[] = {"Metacarpal", "Proximal", "Middle", "Distal"};
-  const std::string stateNames[] = {"STATE_INVALID", "STATE_START", "STATE_UPDATE", "STATE_END"};
-
   // Interface for internal use only
   class LEAP_EXPORT_CLASS Interface {
   public:

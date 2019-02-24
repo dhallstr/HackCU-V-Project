@@ -2,8 +2,9 @@
 #include <cstring>
 #include <vector>
 #include <unistd.h>
-#include "Leap.h"
 
+#include "Leap.h"
+#include "main.h"
 #include "HandSignal.h"
 
 using namespace std;
@@ -89,8 +90,8 @@ void EventListener::onFrame(const Controller& controller) {
 
   //cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
   HandList hands = frame.hands();
-  //if(hands.count() < 1)
-  //  return;
+  if(hands.count() < 1)
+    return;
   // Get the first hand
   const Hand hand = *hands.begin();
   string handType = hand.isLeft() ? "Left hand" : "Right hand";
