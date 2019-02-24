@@ -117,14 +117,17 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
             for (int w = 0; w < 2; w++) {
                 if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] + offset[w]) > settings.positionDiff) {
                     errorcode = 4;
+                    cout << fingerNames[hs.fingerTypes[i]];
                     return false;
                 }
                 if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] + offset[w]) > settings.positionDiff) {
                     errorcode = 5;
+                    cout << fingerNames[hs.fingerTypes[i]];
                     return false;
                 }
                 if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) > settings.directionDiff) {
                     errorcode = 6;
+                    cout << fingerNames[hs.fingerTypes[i]];
                     return false;
                 }
             }
