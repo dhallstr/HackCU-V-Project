@@ -63,7 +63,7 @@ ostream &operator<<(ostream &os, const HandSignal &hs) {
     if (hs.fingers == 0) return os << "Invalid HandSignal";
     
     for (int i = 0; i < hs.fingers; i++) {
-      os << string(4, ' ') <<  hs.fingerNames[fingerTypes[i]]
+      os << string(4, ' ') <<  fingerNames[hs.fingerTypes[i]]
                 << " finger, id: " << i
                 << ", length: " << hs.fingerLengths[i]
                 << "mm" << endl;
