@@ -109,6 +109,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
+            errorcode = 3;
             return false;
         }
         for (int b = 0; b < 4; ++b) {
@@ -116,12 +117,15 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
             Bone bone = finger.bone(boneType);
             for (int w = 0; w < 2; w++) {
                 if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] + offset[w]) < settings.positionDiff) {
+                    errorcode = 4;
                     return false;
                 }
                 if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] + offset[w]) < settings.positionDiff) {
+                    errorcode = 5;
                     return false;
                 }
                 if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) < settings.directionDiff) {
+                    errorcode = 6;
                     return false;
                 }
             }
