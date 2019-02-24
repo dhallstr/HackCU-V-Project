@@ -28,7 +28,7 @@ HandSignal::HandSignal(const deque<Hand> &list) {
     }
 
     fingers = list.front().fingers().count();
-    if(DEBUG > 2) cout << "[HandSignals] data received: " << list.back().fingers() << endl;
+    if(DEBUG > 2) cout << "[HandSignals] data received:\n" << list.back().fingers() << endl;
 
     for (int i = 0; i < fingers; i++) {
         fingerLengths[i] = 0;
@@ -118,8 +118,7 @@ ostream &operator<<(ostream &os, const HandSignal &hs) {
     if (hs.fingers == 0) return os << "Invalid HandSignal";
 
     for (int i = 0; i < hs.fingers; i++) {
-      os << string(4, ' ') <<  fingerNames[hs.fingerTypes[i]]
-                << " finger, length: " << hs.fingerLengths[i]
+      os << string(4, ' ') <<  "Length: " << hs.fingerLengths[i]
                 << "mm" << endl;
 
       // Get finger bones
@@ -199,7 +198,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
 
                 if(errorcode != 0)
                 {
-                  if(DEBUG > 2) cout << fingerNames[fingerTypes[i]];
+                  if(DEBUG > 2) cout << fingerNames[i];
                   return false;
                 }
             }

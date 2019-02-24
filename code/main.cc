@@ -124,6 +124,7 @@ void EventListener::onFrame(const Controller& controller) {
     if(DEBUG > 2) cout << "[Listener] Sending training vector!" << endl;
     if(DEBUG > 2) cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
     HandSignal hs(currentGesture, s);
+    cout << "Saw extended fingers: " << hand.fingers().extended().count() << endl;
     string gname, gcomm;
     cout << "Enter name for new gesture: ";
     cin >> gname;
@@ -131,7 +132,6 @@ void EventListener::onFrame(const Controller& controller) {
     cin >> gcomm;
     gestureCollection.add(hs, gname, gcomm);
     if(DEBUG > 2) cout << "[Listener] HandSignal is:\n" << hs << endl;
-    cout << "Saved gesture with extended fingers: " << hand.fingers().extended().count() << endl;
     mode = 0; // exit training mode
   }
 }
@@ -170,6 +170,12 @@ int main(int argc, const char* argv[])
 
   // Have the listener receive events from the controller
   controller.addListener(listener);
+
+  for (const HandSignal &hs : gestureCollection.signals)
+  {
+    cout << hs << endl;
+  }
+
 
   bool running = true;
   while (running)
