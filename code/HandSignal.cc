@@ -52,7 +52,7 @@ HandSignal::HandSignal(const vector<Hand> &list) {
         
         for (i = 0; i < fingers; i++) {
             fingerLengths[i] /= list.size();
-            float *norm = boneStarts[i][0]);
+            float *norm = boneStarts[i][0];
             for (int w = 0; w < 3; w++) {
                 norm[w] /= list.size();
             }
@@ -110,7 +110,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
         return false;
     }
     int i = 0;
-    Vector first = hand.palmPosition();
+    //Vector first = hand.palmPosition();
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
