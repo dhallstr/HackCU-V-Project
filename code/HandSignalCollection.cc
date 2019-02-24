@@ -31,7 +31,7 @@ HandSignalCollection::HandSignalCollection() {
 
                 f >> hs.fingers;
                 
-                f >> settings.fingerLengthDiff >> settings.positionDiff >> settings.directionDiff;
+                f >> hs.settings.fingerLengthDiff >> hs.settings.positionDiff >> hs.settings.directionDiff;
                 
                 for (int j = 0; j < hs.fingers; j++) {
                     int x;
