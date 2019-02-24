@@ -71,9 +71,9 @@ HandSignal::HandSignal(const Hand &hand) {
     for (i = 0; i < fingers; i++) {
         for (int b = 0; b < 4; b++) {
             for (int w = 0; w < 3; w++) {
-                boneStarts[i][b][w] =0;//-= offset[i][w];
-                boneEnds[i][b][w] =0;//-= offset[i][w];
-                boneDirs[i][b][w] =0;//-= offset[i][w];
+                boneStarts[i][b][w] -= offset[i][w];
+                boneEnds[i][b][w] -= offset[i][w];
+                boneDirs[i][b][w] -= offset[i][w];
             }
         }
     }
