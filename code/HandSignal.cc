@@ -17,8 +17,11 @@ HandSignal::HandSignal(const vector<FingerList> &list) {
         return;
     }
     fingers = list[0].count();
+    int ind = -1;
     for (FingerList fl : list) {
+        ind++;
         if (fl.count() != fingers) {
+            cout << "Error: inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
             fingers = 0;
             return;
         }
