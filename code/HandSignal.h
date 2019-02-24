@@ -30,6 +30,7 @@ class HandSignal {
         int fingers;
         Leap::Finger::Type fingerTypes[20];
         float fingerLengths[20];
+        bool fingerExtended[20];
         //int boneTypes[20][4];
         float boneStarts[20][4][3];
         float boneEnds[20][4][3];

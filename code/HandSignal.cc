@@ -35,6 +35,7 @@ HandSignal::HandSignal(const vector<Hand> &list) {
         for (FingerList::const_iterator fl_iter = fl.begin(); fl_iter != fl.end(); ++fl_iter, i++) {
             const Finger finger = *fl_iter;
             fingerTypes[i] = finger.type();
+            fingerExtended[i] = finger.isExtended();
             fingerLengths[i] += finger.length();
             for (int b = 0; b < 4; ++b) {
                 Bone::Type boneType = static_cast<Bone::Type>(b);
@@ -119,7 +120,13 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
         
-        if (!finger.isExtended()) continue;
+        if (!finger.isExtended()) {
+            if (fingerExtended[i]) {
+                errorcode = 7;
+                return false;
+            }
+            continue;
+        }
         // Finger length
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
             errorcode = 3;
