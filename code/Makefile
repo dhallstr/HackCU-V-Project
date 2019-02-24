@@ -15,7 +15,7 @@ endif
 CXX=/usr/bin/g++
 
 main: main.cc HandSignal.cc
-	$(CXX) -std=c++14 -Wall -g -I../include main.cc HandSignal.cc -o main $(LEAP_LIBRARY)
+	$(CXX) -std=c++14 -Wall -g -I../include main.cc HandSignal.cc HandSignalCollection.cc -o main $(LEAP_LIBRARY)
 
 ifeq ($(OS), Darwin)
 	install_name_tool -change @loader_path/libLeap.dylib ../lib/libLeap.dylib main

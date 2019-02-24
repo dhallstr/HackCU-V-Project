@@ -8,6 +8,7 @@
 #include "Leap.h"
 #include "main.h"
 #include "HandSignal.h"
+#include "HandSignalCollection.h"
 
 using namespace std;
 using namespace Leap;

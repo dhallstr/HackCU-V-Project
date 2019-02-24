@@ -10,6 +10,7 @@
 #include "HandSignalCollection.h"
 
 using namespace std;
+using namespace Leap;
 
 HandSignalCollection::HandSignalCollection() {
     ifstream f("trained_signals.gs");
@@ -20,29 +21,30 @@ HandSignalCollection::HandSignalCollection() {
             int num;
             f >> num;
             for (int i = 0; i < num; i++) {
+                HandSignal &hs = signals[i];
                 string line;
                 getline(f, line);// remove extra \n char
                 getline(f, line);// read in signal name
                 names.push_back(line);
                 getline(f, line);// read in signal command
                 commands.push_back(line);
-                
-                f >> fingers;
-                
+
+                f >> hs.fingers;
+
                 for (int j = 0; j < hs.fingers; j++) {
                     int x;
                     f >> x;
                     hs.fingerTypes[j] = static_cast<Finger::Type>(x);
                 }
-                
+
                 for (int j = 0; j < hs.fingers; j++) {
                     f >> hs.fingerLengths[j];
                 }
-                
+
                 for (int j = 0; j < hs.fingers; j++) {
                     f >> hs.fingerExtended[j];
                 }
-                
+
                 for (int j = 0; j < hs.fingers; j++) {
                     for (int b = 0; b < 4; b++) {
                         for (int w = 0; w < 3; w++) {
@@ -50,7 +52,7 @@ HandSignalCollection::HandSignalCollection() {
                         }
                     }
                 }
-                
+
                 for (int j = 0; j < hs.fingers; j++) {
                     for (int b = 0; b < 4; b++) {
                         for (int w = 0; w < 3; w++) {
@@ -58,7 +60,7 @@ HandSignalCollection::HandSignalCollection() {
                         }
                     }
                 }
-                
+
                 for (int j = 0; j < hs.fingers; j++) {
                     for (int b = 0; b < 4; b++) {
                         for (int w = 0; w < 3; w++) {
@@ -76,9 +78,9 @@ HandSignalCollection::HandSignalCollection() {
     if (DEBUG) cout << "[HandSignalCollection] Reading file trained_signals.gs failed!" << endl;
 }
 
-bool HandSignalCollection::save() const {
+bool HandSignalCollection::save() {
     ofstream savef("trained_signals.gs");
-    
+
     if (savef) {
         savef << "#GS\n" << signals.size() << '\n';
         for (int i = 0; i < signals.size(); i++) {
@@ -86,22 +88,22 @@ bool HandSignalCollection::save() const {
             HandSignal &hs = signals[i];
             savef << hs.fingers << '\n';
             savef << hs.settings.fingerLengthDiff << ' ' << hs.settings.positionDiff << ' ' << hs.settings.directionDiff << '\n';
-            
+
             for (int j = 0; j < hs.fingers; j++) {
                 savef << static_cast<int>(hs.fingerTypes[j]) << ' ';
             }
-            savef << '\n'
-            
+            savef << '\n';
+
             for (int j = 0; j < hs.fingers; j++) {
                 savef << hs.fingerLengths[j] << ' ';
             }
-            savef << '\n'
-            
+            savef << '\n';
+
             for (int j = 0; j < hs.fingers; j++) {
                 savef << hs.fingerExtended[j] << ' ';
             }
-            savef << '\n'
-            
+            savef << '\n';
+
             for (int j = 0; j < hs.fingers; j++) {
                 for (int b = 0; b < 4; b++) {
                     for (int w = 0; w < 3; w++) {
@@ -110,7 +112,7 @@ bool HandSignalCollection::save() const {
                 }
             }
             savef << '\n';
-            
+
             for (int j = 0; j < hs.fingers; j++) {
                 for (int b = 0; b < 4; b++) {
                     for (int w = 0; w < 3; w++) {
@@ -119,7 +121,7 @@ bool HandSignalCollection::save() const {
                 }
             }
             savef << '\n';
-            
+
             for (int j = 0; j < hs.fingers; j++) {
                 for (int b = 0; b < 4; b++) {
                     for (int w = 0; w < 3; w++) {
@@ -139,20 +141,20 @@ void HandSignalCollection::exec(int i) const {
     // TODO exec command
 }
 
-bool add(HandSignal::HandSignal &hs, std::string &name, std::string &command) {
+bool HandSignalCollection::add(HandSignal &hs, std::string &name, std::string &command) {
     signals.push_back(hs);
     names.push_back(name);
     commands.push_back(command);
     return save();
 }
 
-bool remove(int i) {
+bool HandSignalCollection::remove(int i) {
     if (i < signals.size()) {
-        signals.erase(signals.start() + i);
-        names.erase(names.start() + i);
-        commands.erase(commands.start() + i);
+        signals.erase(signals.begin() + i);
+        names.erase(names.begin() + i);
+        commands.erase(commands.begin() + i);
         bool result = save();
-        if (!save) {
+        if (!result) {
             if (DEBUG) cout << "[HandSignalCollection] .remove() couldn't save the file" << endl;
             return false;
         }
@@ -161,8 +163,8 @@ bool remove(int i) {
     return false;
 }
 
-bool remove(std::string &name) {
-    for (int i = 0; i < names.length; i++) {
+bool HandSignalCollection::remove(std::string &name) {
+    for (int i = 0; i < names.size(); i++) {
         if (names[i].compare(name) == 0) {
             return remove(i);
         }
