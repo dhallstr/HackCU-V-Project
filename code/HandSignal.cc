@@ -12,7 +12,6 @@ using namespace std;
 HandSignal::HandSignal(const vector<Hand> &list, sensitivity_t config) : HandSignal(list)
 {
   settings = config;
-  cout << "Position Diff: " << settings.positionDiff << endl;
 }
 
 HandSignal::HandSignal(const vector<Hand> &list) {
