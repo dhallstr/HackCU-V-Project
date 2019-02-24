@@ -8,11 +8,11 @@
 
 typedef struct sensitivityConfig_s {
     
-    float fingerLengthDiff = 8;
+    float fingerLengthDiff = 3;
     
-    float positionDiff = 8;
+    float positionDiff = 3;
     
-    float directionDiff = 0.2;
+    float directionDiff = 0.1;
     
 } sensitivity_t;
 
