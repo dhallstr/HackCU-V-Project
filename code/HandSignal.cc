@@ -51,18 +51,15 @@ HandSignal::HandSignal(const Hand &hand) {
         for (int b = 0; b < 4; ++b) {
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
-
-            boneStarts[i][b][0] += bone.prevJoint().x;
-            boneStarts[i][b][1] += bone.prevJoint().y;
-            boneStarts[i][b][2] += bone.prevJoint().z;
-
-            boneEnds[i][b][0] += bone.nextJoint().x;
-            boneEnds[i][b][1] += bone.nextJoint().y;
-            boneEnds[i][b][2] += bone.nextJoint().z;
-
-            boneDirs[i][b][0] += bone.direction().x;
-            boneDirs[i][b][1] += bone.direction().y;
-            boneDirs[i][b][2] += bone.direction().z;
+            
+            for (int w = 0; w < 3; w++) {
+                boneStarts[i][b][w] = bone.prevJoint()[w];
+                boneEnds[i][b][w] = bone.nextJoint()[w];
+                boneDirs[i][b][w] = bone.direction()[w];
+                
+                boneStarts[i][b][w] -= boneStarts[i][0][w];
+                boneEnds[i][b][w] -= boneStarts[i][0][w];
+            }
         }
     }
 }
