@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <cstring>
-#include <deque>
 
 typedef struct sensitivityConfig_s {
 
@@ -18,8 +17,8 @@ typedef struct sensitivityConfig_s {
 class HandSignal {
     public:
         HandSignal() = default;
-        HandSignal(const std::deque<Leap::Hand> &list);
-        HandSignal(const std::deque<Leap::Hand> &list, sensitivity_t config);
+        HandSignal(const Hand &hand);
+        HandSignal(const Hand &hand, sensitivity_t config);
         HandSignal(const HandSignal &other);
 
         bool matchesSignal(const Leap::Hand &curr_fingers, int &errorcode) const;

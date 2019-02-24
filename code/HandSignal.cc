@@ -2,7 +2,6 @@
 #include <fstream>
 #include <cstring>
 #include <cstdlib>
-#include <deque>
 
 #include "Leap.h"
 #include "main.h"
@@ -13,22 +12,22 @@ using namespace std;
 
 
 
-HandSignal::HandSignal(const deque<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
+HandSignal::HandSignal(const Hand &hand, sensitivity_t config) : HandSignal(hand) { settings = config; }
 
-HandSignal::HandSignal(const deque<Hand> &list) {
+HandSignal::HandSignal(const Hand &hand) {
     if(DEBUG > 2) cout << "[HandSignal] handSignal ctor called!" << std::endl;
-    if (list.size() == 0) {
+    if (!hand.isValid()) {
         if(DEBUG > 0) cout << "[HandSignal] ERROR: no Hands passed" << endl;
         fingers = 0;
         return;
     }
-    if (list.front().fingers().count() > 20) {
+    if (hand.fingers().count() > 20) {
         fingers = 0;
         return;
     }
 
-    fingers = list.front().fingers().count();
-    if(DEBUG > 2) cout << "[HandSignals] data received:\n" << list.back().fingers() << endl;
+    fingers = lhand.fingers().count();
+    if(DEBUG > 2) cout << "[HandSignals] data received:\n" << hand.fingers() << endl;
 
     for (int i = 0; i < fingers; i++) {
         fingerLengths[i] = 0;
@@ -42,55 +41,33 @@ HandSignal::HandSignal(const deque<Hand> &list) {
         }
     }
 
-
-    int ind = -1;
-    for (Hand hand : list) {
-        ind++;
-        FingerList fl = hand.fingers();
-        if (fl.count() != fingers) {
-            if(DEBUG > 0) cout << "[ERROR] inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
-            fingers = 0;
-            return;
-        }
-        int i = 0;
-        for (FingerList::const_iterator fl_iter = fl.begin(); fl_iter != fl.end(); ++fl_iter, i++) {
-            const Finger finger = *fl_iter;
-            fingerTypes[i] = finger.type();
-            fingerExtended[i] = finger.isExtended();
-            fingerLengths[i] += finger.length();
-            for (int b = 0; b < 4; ++b) {
-                Bone::Type boneType = static_cast<Bone::Type>(b);
-                Bone bone = finger.bone(boneType);
-
-                boneStarts[i][b][0] += bone.prevJoint().x;
-                boneStarts[i][b][1] += bone.prevJoint().y;
-                boneStarts[i][b][2] += bone.prevJoint().z;
-
-                boneEnds[i][b][0] += bone.nextJoint().x;
-                boneEnds[i][b][1] += bone.nextJoint().y;
-                boneEnds[i][b][2] += bone.nextJoint().z;
-
-                boneDirs[i][b][0] += bone.direction().x;
-                boneDirs[i][b][1] += bone.direction().y;
-                boneDirs[i][b][2] += bone.direction().z;
-            }
-        }
+    FingerList fl = hand.fingers();
+    if (fl.count() != fingers) {
+        if(DEBUG > 0) cout << "[ERROR] inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
+        fingers = 0;
+        return;
     }
-    for (int i = 0; i < fingers; i++)
-    {
-        fingerLengths[i] /= list.size();
-        float norm[3];
-        for (int w = 0; w < 3; w++) {
-            norm[w] = boneStarts[i][0][w] / list.size();
-        }
-        for (int b = 0; b < 4; b++) {
-            for (int w = 0; w < 3; w++) {
-                boneStarts[i][b][w] /= list.size();
-                boneEnds[i][b][w] /= list.size();
-                boneDirs[i][b][w] /= list.size();
-                boneStarts[i][b][w] -= norm[w];//list[0].palmPosition()[w];
-                boneEnds[i][b][w] -= norm[w];//list[0].palmPosition()[w];
-            }
+    int i = 0;
+    for (FingerList::const_iterator fl_iter = fl.begin(); fl_iter != fl.end(); ++fl_iter, i++) {
+        const Finger finger = *fl_iter;
+        fingerTypes[i] = finger.type();
+        fingerExtended[i] = finger.isExtended();
+        fingerLengths[i] += finger.length();
+        for (int b = 0; b < 4; ++b) {
+            Bone::Type boneType = static_cast<Bone::Type>(b);
+            Bone bone = finger.bone(boneType);
+
+            boneStarts[i][b][0] += bone.prevJoint().x;
+            boneStarts[i][b][1] += bone.prevJoint().y;
+            boneStarts[i][b][2] += bone.prevJoint().z;
+
+            boneEnds[i][b][0] += bone.nextJoint().x;
+            boneEnds[i][b][1] += bone.nextJoint().y;
+            boneEnds[i][b][2] += bone.nextJoint().z;
+
+            boneDirs[i][b][0] += bone.direction().x;
+            boneDirs[i][b][1] += bone.direction().y;
+            boneDirs[i][b][2] += bone.direction().z;
         }
     }
 }
