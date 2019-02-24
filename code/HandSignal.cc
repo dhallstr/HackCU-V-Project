@@ -118,6 +118,8 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
     // Each finger
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
+        
+        if (!finger.isExtended()) continue;
         // Finger length
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
             errorcode = 3;
