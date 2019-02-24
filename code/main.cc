@@ -14,7 +14,7 @@ using namespace std;
 using namespace Leap;
 
 static int mode = 0;
-static vector<HandSignal> gestureBank;
+static HandSignalCollection gestureCollection;
 
 ostream &operator<<(ostream &o, const FingerList &fingers)
 {
@@ -84,14 +84,8 @@ void EventListener::onFrame(const Controller& controller) {
     return;
   // Get the most recent frame and report some basic information
   const Frame frame = controller.frame();
-  /*if(DEBUG > 1) cout << "Frame id: " << frame.id()
-            << ", timestamp: " << frame.timestamp()
-            << ", hands: " << frame.hands().count()
-            << ", extended fingers: " << frame.fingers().extended().count()
-            << ", tools: " << frame.tools().count()
-            << ", gestures: " << frame.gestures().count() << endl;*/
 
-  //if(DEBUG > 1) cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
+  if(DEBUG > 2) cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
   HandList hands = frame.hands();
   if(hands.count() < 1)
     return;
@@ -99,13 +93,6 @@ void EventListener::onFrame(const Controller& controller) {
   const Hand hand = *hands.begin();
   string handType = hand.isLeft() ? "Left hand" : "Right hand";
   if(DEBUG > 1) cout << "[Listener] " << handType << " pos: " << hand.palmPosition() << ", extended fingers: " << hand.fingers().extended().count() << endl;
-  // Get the hand's normal vector and direction
-  //const Vector normal = hand.palmNormal();
-  //const Vector direction = hand.direction();
-  // Calculate the hand's pitch, roll, and yaw angles
-  /*if(DEBUG > 1) cout << string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
-            << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
-            << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << endl;*/
 
   // Get fingers
   sensitivity_t s = {50, 60, 0.6};
@@ -117,7 +104,7 @@ void EventListener::onFrame(const Controller& controller) {
   if(mode == 1) // normal operation
   {
     int i = 0;
-    for(const HandSignal &h : gestureBank)
+    for(const HandSignal &h : gestureCollection.signals)
     {
       // send the hand be to processed
       if(DEBUG > 1) cout << "[Listener] Signal " << i << ": match? ";
@@ -136,9 +123,14 @@ void EventListener::onFrame(const Controller& controller) {
     // Send the vector to train
     if(DEBUG > 2) cout << "[Listener] Sending training vector!" << endl;
     if(DEBUG > 2) cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
-    HandSignal h(currentGesture, s);
-    gestureBank.push_back(h);
-    if(DEBUG > 2) cout << "[Listener] HandSignal is:\n" << h << endl;
+    HandSignal hs(currentGesture, s);
+    string gname, gcomm;
+    cout << "Enter name for new gesture: ";
+    cin >> gname;
+    cout << "Enter script name: ";
+    cin >> gcomm;
+    gestureCollection.add(hs, gname, gcomm);
+    if(DEBUG > 2) cout << "[Listener] HandSignal is:\n" << hs << endl;
     cout << "Saved gesture with extended fingers: " << hand.fingers().extended().count() << endl;
     mode = 0; // exit training mode
   }
@@ -199,11 +191,6 @@ int main(int argc, const char* argv[])
         cout << "Paused" << endl;
       break;
       case 3:
-        string gname, gcomm;
-        cout << "Enter name for new gesture: ";
-        cin >> gname;
-        cout << "Enter script name: ";
-        cin >> gcomm;
         cin.get();
         cout << "Prepare gesture, and press enter...";
         cin.get();
