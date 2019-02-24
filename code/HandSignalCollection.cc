@@ -76,6 +76,7 @@ HandSignalCollection::HandSignalCollection() {
                 if (DEBUG) cout << "[HandSignalCollection] error: trained_signals.gs format invalid! Signal data may be corrupted!" << endl;
                 return;
             }
+            return;
         }
     }
     if (DEBUG) cout << "[HandSignalCollection] Reading file trained_signals.gs failed!" << endl;
