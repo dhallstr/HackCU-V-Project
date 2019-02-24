@@ -19,10 +19,10 @@ typedef struct sensitivityConfig_s {
 class HandSignal {
     public:
         HandSignal() = default;
-        HandSignal(const std::vector<Leap::FingerList> &list);
-        HandSignal(const std::vector<Leap::FingerList> &list, sensitivity_t config);
+        HandSignal(const std::vector<Leap::Hand> &list);
+        HandSignal(const std::vector<Leap::Hand> &list, sensitivity_t config);
         
-        bool matchesSignal(const Leap::FingerList &curr_fingers, int &errorcode) const;
+        bool matchesSignal(const Leap::Hand &curr_fingers, int &errorcode) const;
         bool isValid() const;
         friend std::ostream &operator<<(std::ostream &os, const HandSignal &hs);
         

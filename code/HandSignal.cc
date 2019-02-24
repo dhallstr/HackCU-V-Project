@@ -9,17 +9,19 @@ using namespace std;
 
 
 
-HandSignal::HandSignal(const vector<FingerList> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
+HandSignal::HandSignal(const vector<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
     
-HandSignal::HandSignal(const vector<FingerList> &list) {
+HandSignal::HandSignal(const vector<Hand> &list) {
+    
     if (list.size() > 20) {
         fingers = 0;
         return;
     }
     fingers = list[0].count();
     int ind = -1;
-    for (FingerList fl : list) {
+    for (Hand hand : list) {
         ind++;
+        FingerList fl = hand.fingers();
         if (fl.count() != fingers) {
             cout << "Error: inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
             fingers = 0;
@@ -90,7 +92,8 @@ float valueDiff(float base, float val) {
     return abs(val - base);
 }
 
-bool HandSignal::matchesSignal(const FingerList &curr_fingers, int &errorcode) const {
+bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
+    const FingerList curr_fingers = hand.fingers();
     errorcode = 0;
     if (fingers == 0) {
         errorcode = 1;
