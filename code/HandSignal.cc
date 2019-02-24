@@ -64,7 +64,6 @@ HandSignal::HandSignal(const Hand &hand) {
     for (i = 0; i < fingers; i++) {
         for (int w = 0; w < 3; w++) {
             offset[i][w] = boneStarts[i][0][w];
-            cout << "[HS] offset(" << i << ", " << w << "): " << offset[i][w] << endl;
         }
     }
     
@@ -73,7 +72,6 @@ HandSignal::HandSignal(const Hand &hand) {
             for (int w = 0; w < 3; w++) {
                 boneStarts[i][b][w] -= offset[i][w];
                 boneEnds[i][b][w] -= offset[i][w];
-                boneDirs[i][b][w] -= offset[i][w];
             }
         }
     }
