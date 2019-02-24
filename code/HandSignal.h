@@ -1,5 +1,5 @@
 #ifndef HandSignalH
-#define handSignalH
+#define HandSignalH
 
 #include <iostream>
 #include <cstring>
