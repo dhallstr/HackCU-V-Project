@@ -8,9 +8,9 @@
 
 class HandSignal {
     public:
-        HandSignal(const &std::vector<const Leap::FingerList> list) const;
+        HandSignal(const std::vector<const Leap::FingerList> &list);
         bool matchesSignal(const Leap::FingerList &fingers, int &errorcode) const;
-        bool isValid();
+        bool isValid() const;
         
     private:
         int fingers;
