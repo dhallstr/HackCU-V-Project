@@ -18,7 +18,7 @@ typedef struct sensitivityConfig_s {
 
 class HandSignal {
     public:
-        HandSignal() = default;
+        HandSignal() { cout << "[HandSignal] Ctor called with no args!!" << endl;}
         HandSignal(const std::vector<Leap::Hand> &list);
         HandSignal(const std::vector<Leap::Hand> &list, sensitivity_t config);
         
