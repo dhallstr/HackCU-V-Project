@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "main.h"
 #include "Leap.h"
+#include "main.h"
 #include "HandSignal.h"
 #include "HandSignalCollection.h"
 
@@ -171,4 +171,8 @@ bool HandSignalCollection::remove(std::string &name) {
         }
     }
     return false;
+}
+
+std::string HandSignalCollection::getName(int i) {
+  return names[i];
 }

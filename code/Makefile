@@ -14,7 +14,7 @@ endif
 
 CXX=/usr/bin/g++
 
-main: main.cc HandSignal.cc
+main: main.cc HandSignal.cc HandSignalCollection.cc
 	$(CXX) -std=c++14 -Wall -g -I../include main.cc HandSignal.cc HandSignalCollection.cc -o main $(LEAP_LIBRARY)
 
 ifeq ($(OS), Darwin)

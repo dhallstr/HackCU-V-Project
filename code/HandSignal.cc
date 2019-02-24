@@ -5,8 +5,8 @@
 #include <deque>
 
 #include "Leap.h"
-#include "HandSignal.h"
 #include "main.h"
+#include "HandSignal.h"
 
 using namespace Leap;
 using namespace std;

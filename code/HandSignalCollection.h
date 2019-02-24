@@ -1,9 +1,6 @@
 #ifndef HandSignalCollectionH
 #define HandSignalCollectionH
 
-#include "main.h"
-#include "HandSignal.h"
-
 class HandSignalCollection {
     public:
       HandSignalCollection();
@@ -12,6 +9,7 @@ class HandSignalCollection {
       bool add(HandSignal &hs, std::string &name, std::string &command);
       bool remove(int i);
       bool remove(std::string &name);
+      std::string getName(int i);
 
       friend class EventListener;
 

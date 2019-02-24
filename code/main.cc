@@ -85,7 +85,7 @@ void EventListener::onFrame(const Controller& controller) {
   // Get the most recent frame and report some basic information
   const Frame frame = controller.frame();
 
-  if(DEBUG > 2) cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
+  if(DEBUG > 3) cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
   HandList hands = frame.hands();
   if(hands.count() < 1)
     return;
@@ -113,7 +113,7 @@ void EventListener::onFrame(const Controller& controller) {
       if(DEBUG > 1) cout << " " << (success ? "Yes" : "No") << ", code:  " << errorCode << endl;
       if(success)
       {
-        cout << "[Listener] Gesture " << i << " triggered!" << endl;
+        cout << "[Listener] Gesture " << gestureCollection.getName(i) << " triggered!" << endl;
       }
       i++;
     }
