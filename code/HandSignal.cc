@@ -19,6 +19,7 @@ HandSignal::HandSignal(const vector<Hand> &list) {
     }
 
     fingers = list[0].fingers().count();
+    cout << "[HandSignals] data received: " << list[list.size() - 1].fingers() << endl;
 
     for (int i = 0; i < fingers; i++) {
         fingerLengths[i] = 0;
