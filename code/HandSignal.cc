@@ -52,7 +52,10 @@ HandSignal::HandSignal(const vector<Hand> &list) {
         
         for (i = 0; i < fingers; i++) {
             fingerLengths[i] /= list.size();
-            float *norm = boneStarts[i][0] / list.size();
+            float *norm = boneStarts[i][0]);
+            for (int w = 0; w < 3; w++) {
+                norm[w] /= list.size();
+            }
             for (int b = 0; b < 4; b++) {
                 
                 
