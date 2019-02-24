@@ -166,12 +166,6 @@ int main(int argc, const char* argv[])
   // Have the listener receive events from the controller
   controller.addListener(listener);
 
-  for (const HandSignal &hs : gestureCollection.signals)
-  {
-    cout << hs << endl;
-  }
-
-
   bool running = true;
   while (running)
   {
@@ -212,7 +206,7 @@ int main(int argc, const char* argv[])
     }
     else if (command.compare("list") == 0)
     {
-      cout << "l" << endl;
+      cout << gestureCollection << endl;
     }
     else if (command.compare("help") == 0)
     {
