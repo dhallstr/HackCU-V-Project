@@ -11,6 +11,7 @@ def test():
 	return "Received."
 
 @route("/")
+@route('/<filepath:path>')
 def sendFile(filepath="index.html"):
 	return static_file(filepath, root='')
 
