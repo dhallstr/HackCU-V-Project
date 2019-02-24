@@ -47,6 +47,10 @@ typedef unsigned __int64 uint64_t;
 
 namespace Leap {
 
+  const std::string fingerNames[] = {"Thumb", "Index", "Middle", "Ring", "Pinky"};
+  const std::string boneNames[] = {"Metacarpal", "Proximal", "Middle", "Distal"};
+  const std::string stateNames[] = {"STATE_INVALID", "STATE_START", "STATE_UPDATE", "STATE_END"};
+
   // Interface for internal use only
   class LEAP_EXPORT_CLASS Interface {
   public:
@@ -3238,11 +3242,11 @@ namespace Leap {
 
     /**
      * Returns a timestamp indicating when this frame began being captured on the device.
-     * 
+     *
      * @since 2.2.7
      */
     LEAP_EXPORT int64_t timestamp() const;
-   
+
     /**
      * Reports whether this Image instance contains valid data.
      *
@@ -4671,7 +4675,7 @@ namespace Leap {
     LEAP_EXPORT int64_t id() const;
 
     /**
-     * The frame capture time in microseconds elapsed since an arbitrary point in 
+     * The frame capture time in microseconds elapsed since an arbitrary point in
      * time in the past.
      *
      * Use Controller::now() to calculate the age of the frame.

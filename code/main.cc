@@ -1,7 +1,10 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <unistd.h>
 #include "Leap.h"
+
+#include "HandSignal.h"
 
 using namespace std;
 using namespace Leap;
@@ -23,10 +26,6 @@ class EventListener : public Listener {
 
   private:
 };
-
-const string fingerNames[] = {"Thumb", "Index", "Middle", "Ring", "Pinky"};
-const string boneNames[] = {"Metacarpal", "Proximal", "Middle", "Distal"};
-const string stateNames[] = {"STATE_INVALID", "STATE_START", "STATE_UPDATE", "STATE_END"};
 
 void EventListener::onInit(const Controller& controller) {
   cout << "Initialized" << endl;
@@ -62,14 +61,13 @@ void EventListener::onFrame(const Controller& controller) {
             << ", tools: " << frame.tools().count()
             << ", gestures: " << frame.gestures().count() << endl;*/
 
-  cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
+  //cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
   HandList hands = frame.hands();
   for (HandList::const_iterator hl = hands.begin(); hl != hands.end(); ++hl) {
     // Get the first hand
     const Hand hand = *hl;
     string handType = hand.isLeft() ? "Left hand" : "Right hand";
-    /*cout << string(2, ' ') << handType << ", id: " << hand.id()
-              << ", palm position: " << hand.palmPosition() << endl;*/
+    //cout << string(2, ' ') << handType << ", id: " << hand.id() << ", palm position: " << hand.palmPosition() << endl;
     // Get the hand's normal vector and direction
     //const Vector normal = hand.palmNormal();
     //const Vector direction = hand.direction();
@@ -80,34 +78,51 @@ void EventListener::onFrame(const Controller& controller) {
               << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << endl;*/
 
     // Get the Arm bone
-    Arm arm = hand.arm();
+    //Arm arm = hand.arm();
     /*cout << string(2, ' ') <<  "Arm direction: " << arm.direction()
               << " wrist position: " << arm.wristPosition()
               << " elbow position: " << arm.elbowPosition() << endl;*/
 
     // Get fingers
+    HandSignal h;
     const FingerList fingers = hand.fingers();
     currentGesture.push_back(fingers);
-    if(currentGesture.size() == 50)
+    if(currentGesture.size() == 50) // keep the vector at size 50
       currentGesture.erase(currentGesture.begin());
+    // if training flag goes high, send vector to storage method
+    if(mode == 2)
+    {
+      // Send the vector to train
+      cout << "Sending training vector!" << endl;
+      h = HandSignal(currentGesture);
+      mode = 0; // exit training mode
+    }
+    else if (mode == 1)
+    {
+      int errorCode;
+      // send the fingerlist be to processed
+      bool success = h.matchesSignal(fingers, errorCode);
+      cout << "Match?" << success << ", " << errorCode << endl;
+    }
+    //cout << "\nDebug" << endl;
     for (FingerList::const_iterator fl = fingers.begin(); fl != fingers.end(); ++fl) {
       const Finger finger = *fl;
-      cout << string(4, ' ') <<  fingerNames[finger.type()]
+      /*cout  <<  fingerNames[finger.type()]
                 << " finger, id: " << finger.id()
                 << ", length: " << finger.length()
-                << "mm, width: " << finger.width() << endl;
+                << "mm, width: " << finger.width() << endl;*/
 
       // Get finger bones
       for (int b = 0; b < 4; ++b) {
         Bone::Type boneType = static_cast<Bone::Type>(b);
         Bone bone = finger.bone(boneType);
-        cout << string(6, ' ') <<  boneNames[boneType]
+        /*cout << string(2, ' ') <<  boneNames[boneType]
                   << " bone, start: " << bone.prevJoint()
                   << ", end: " << bone.nextJoint()
-                  << ", direction: " << bone.direction() << endl;
+                  << ", direction: " << bone.direction() << endl;*/
       }
-      break;
     }
+    break; // only do one hand!
   }
 
   // Get tools
@@ -177,8 +192,10 @@ int main(int argc, char** argv) {
         cout << "Stopping!" << endl;
       break;
       case 3:
+        cout << "Ready..." << endl;
+        sleep(1);
         mode = 2;
-        cout << "Training!" << endl;
+        cout << "Trained!" << endl;
       break;
     }
   }
