@@ -48,12 +48,12 @@ HandSignal::HandSignal(const vector<FingerList> &list) {
             }
         }
         for (i = 0; i < fingers; i++) {
-            fingerLengths[i] /= fingers;
+            fingerLengths[i] /= list.size();
             for (int b = 0; b < 4; b++) {
                 for (int w = 0; w < 3; w++) {
-                    boneStarts[i][b][w] /= fingers;
-                    boneEnds[i][b][w] /= fingers;
-                    boneDirs[i][b][w] /= fingers;
+                    boneStarts[i][b][w] /= list.size();
+                    boneEnds[i][b][w] /= list.size();
+                    boneDirs[i][b][w] /= list.size();
                     boneStarts[i][b][w] -= boneStarts[0][0][w];
                     boneEnds[i][b][w] -= boneStarts[0][0][w];
                 }
