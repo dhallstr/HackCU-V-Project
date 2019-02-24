@@ -59,6 +59,7 @@ HandSignal::HandSignal(const Hand &hand) {
             }
         }
     }
+    cout << "[HandSignal] num fingers: " << fingers << endl;
     
     float offset[20][3];
     for (i = 0; i < fingers; i++) {
