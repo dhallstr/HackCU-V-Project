@@ -112,7 +112,7 @@ void EventListener::onFrame(const Controller& controller) {
 
   if(mode == 1) // normal operation
   {
-    for(HandSignal h : gestureBank)
+    for(const HandSignal &h : gestureBank)
     {
       // send the hand be to processed
       cout << "[Listener] Match? ";
