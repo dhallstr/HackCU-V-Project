@@ -49,15 +49,17 @@ HandSignal::HandSignal(const vector<Hand> &list) {
                 boneDirs[i][b][2] += bone.direction().z;
             }
         }
+        
         for (i = 0; i < fingers; i++) {
             fingerLengths[i] /= list.size();
+            float norm[] = boneStarts[i][0];
             for (int b = 0; b < 4; b++) {
                 for (int w = 0; w < 3; w++) {
                     boneStarts[i][b][w] /= list.size();
                     boneEnds[i][b][w] /= list.size();
                     boneDirs[i][b][w] /= list.size();
-                    boneStarts[i][b][w] -= list[0].palmPosition()[w];
-                    boneEnds[i][b][w] -= list[0].palmPosition()[w];
+                    boneStarts[i][b][w] -= norm[w];//list[0].palmPosition()[w];
+                    boneEnds[i][b][w] -= norm[w];//list[0].palmPosition()[w];
                 }
             }
         }
