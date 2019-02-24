@@ -1,9 +1,12 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <cstdlib>
 #include <deque>
+
 #include "Leap.h"
 #include "HandSignal.h"
+#include "main.h"
 
 using namespace Leap;
 using namespace std;
@@ -13,9 +16,9 @@ using namespace std;
 HandSignal::HandSignal(const deque<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
 
 HandSignal::HandSignal(const deque<Hand> &list) {
-    cout << "[HandSignal] handSignal ctor called!" << endl;
+    if(DEBUG > 2) cout << "[HandSignal] handSignal ctor called!" << std::endl;
     if (list.size() == 0) {
-        cout << "[HandSignal] ERROR: no Hands passed" << endl;
+        if(DEBUG > 0) cout << "[HandSignal] ERROR: no Hands passed" << endl;
         fingers = 0;
         return;
     }
@@ -25,7 +28,7 @@ HandSignal::HandSignal(const deque<Hand> &list) {
     }
 
     fingers = list.front().fingers().count();
-    cout << "[HandSignals] data received: " << list.back().fingers() << endl;
+    if(DEBUG > 2) cout << "[HandSignals] data received: " << list.back().fingers() << endl;
 
     for (int i = 0; i < fingers; i++) {
         fingerLengths[i] = 0;
@@ -45,7 +48,7 @@ HandSignal::HandSignal(const deque<Hand> &list) {
         ind++;
         FingerList fl = hand.fingers();
         if (fl.count() != fingers) {
-            cout << "[ERROR] inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
+            if(DEBUG > 0) cout << "[ERROR] inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
             fingers = 0;
             return;
         }
@@ -72,23 +75,23 @@ HandSignal::HandSignal(const deque<Hand> &list) {
                 boneDirs[i][b][2] += bone.direction().z;
             }
         }
+    }
+    for (int i = 0; i < fingers; i++)
+    {
+        fingerLengths[i] /= list.size();
+        float norm[3];
+        for (int w = 0; w < 3; w++) {
+            norm[w] = boneStarts[i][0][w] / list.size();
+        }
+        for (int b = 0; b < 4; b++) {
 
-        for (i = 0; i < fingers; i++) {
-            fingerLengths[i] /= list.size();
-            float norm[3];
+
             for (int w = 0; w < 3; w++) {
-                norm[w] = boneStarts[i][0][w] / list.size();
-            }
-            for (int b = 0; b < 4; b++) {
-
-
-                for (int w = 0; w < 3; w++) {
-                    boneStarts[i][b][w] /= list.size();
-                    boneEnds[i][b][w] /= list.size();
-                    boneDirs[i][b][w] /= list.size();
-                    boneStarts[i][b][w] -= norm[w];//list[0].palmPosition()[w];
-                    boneEnds[i][b][w] -= norm[w];//list[0].palmPosition()[w];
-                }
+                boneStarts[i][b][w] /= list.size();
+                boneEnds[i][b][w] /= list.size();
+                boneDirs[i][b][w] /= list.size();
+                boneStarts[i][b][w] -= norm[w];//list[0].palmPosition()[w];
+                boneEnds[i][b][w] -= norm[w];//list[0].palmPosition()[w];
             }
         }
     }
@@ -96,12 +99,10 @@ HandSignal::HandSignal(const deque<Hand> &list) {
 
 HandSignal::HandSignal(const HandSignal &other) : fingers(other.fingers), settings(other.settings)
 {
-  cout << "[HandSignal] Copy ctor called!" << endl;
+  if(DEBUG > 2) cout << "[HandSignal] Copy ctor called!" << endl;
   for(int i = 0; i < 20; i++)
   {
     fingerLengths[i] = other.fingerLengths[i];
-    if(&(fingerLengths[0]) == &(other.fingerLengths[0]))
-      cout << "[ERROR] BAD!" << endl;
     fingerExtended[i] = other.fingerExtended[i];
     for(int b = 0; b < 4; b++)
     {
@@ -142,6 +143,16 @@ float valueDiff(float base, float val) {
     return abs(val - base);
 }
 
+bool allFalse(const bool arr[])
+{
+  for(int i = 0; i < 20; i++)
+  {
+    if(arr[i])
+      return false;
+  }
+  return true;
+}
+
 bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
     const FingerList curr_fingers = hand.fingers();
     errorcode = 0;
@@ -163,7 +174,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
                 errorcode = 7;
                 return false;
         }
-        //if (!finger.isExtended()) continue; // we don't care about position of non-extended fingers
+        if (!finger.isExtended() && !allFalse(fingerExtended)) continue; // we don't care about position of non-extended fingers
         // Finger length
         if (valueDiff(fingerLengths[i], finger.length()) > settings.fingerLengthDiff) {
             errorcode = 3;
@@ -178,11 +189,11 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
             {
                 if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) > settings.positionDiff) {
                     errorcode = 4;
-                    cout << "startDiff = " << boneStarts[i][b][w] - (bone.prevJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " ";
+                    if(DEBUG > 2) cout << "startDiff = " << boneStarts[i][b][w] - (bone.prevJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " ";
                 }
                 else if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) > settings.positionDiff) {
                     errorcode = 5;
-                    cout << "endDiff = " << boneEnds[i][b][w] - (bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " > " << settings.positionDiff << " and new bone pos is " << bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w] << " and trained position is " << boneEnds[i][b][w] << " ";
+                    if(DEBUG > 2) cout << "endDiff = " << boneEnds[i][b][w] - (bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w]) << " > " << settings.positionDiff << " and new bone pos is " << bone.nextJoint()[w] - finger.bone(static_cast<Bone::Type>(0)).prevJoint()[w] << " and trained position is " << boneEnds[i][b][w] << " ";
                 }
                 else if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) > settings.directionDiff) {
                     errorcode = 6;
@@ -190,12 +201,11 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
 
                 if(errorcode != 0)
                 {
-                  cout << fingerNames[fingerTypes[i]];
+                  if(DEBUG > 2) cout << fingerNames[fingerTypes[i]];
                   return false;
                 }
             }
         }
     }
     return true;
-
 }
