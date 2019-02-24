@@ -5,6 +5,7 @@
 #include "HandSignal.h"
 
 using namespace Leap;
+using namespace std;
 
 
 
