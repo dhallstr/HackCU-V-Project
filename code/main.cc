@@ -175,35 +175,54 @@ int main(int argc, const char* argv[])
   bool running = true;
   while (running)
   {
-    int command = 0;
-    cout << "0. exit \t 1. run \t 2. pause \t 3. add gesture" << endl;
+    string command = "";
+    cout << "Typey >" << endl;
     cin >> command;
-    switch(command)
+    if (command.compare("exit") == 0)
     {
-      case 0:
         running = false;
-      break;
-      case 1:
+    }
+    else if (command.compare("run") == 0)
+    {
         mode = 1;
         cout << "Running" << endl;
-      break;
-      case 2:
+    }
+    else if (command.compare("pause") == 0)
+    {
         mode = 0;
         cout << "Paused" << endl;
-      break;
-      case 3:
-        cin.get();
-        cout << "Prepare gesture, and press enter...";
-        cin.get();
-        cout << "Training..." << endl;
-        sleep(1);
-        mode = 2;
-        while(mode == 2); // handler will change mode
-        cout << "Done!" << endl;
-      break;
+    }
+    else if (command.compare("train") == 0)
+    {
+      cin.get();
+      cout << "Prepare gesture, and press enter...";
+      cin.get();
+      cout << "Training..." << endl;
+      sleep(1);
+      mode = 2;
+      while(mode == 2); // handler will change mode
+      cout << "Done!" << endl;
+    }
+    else if (command.compare("remove") == 0)
+    {
+      string target = "";
+
+      cin >> target;
+      cout << target << endl;
+    }
+    else if (command.compare("list") == 0)
+    {
+      cout << "l" << endl;
+    }
+    else if (command.compare("help") == 0)
+    {
+      cout << "Commands: run, pause, train, remove, list, help" << endl;
+    }
+    else
+    {
+      cout << "Unknown command!" << endl;
     }
   }
-
   cout << "[System] Exiting..." << endl;
   // Remove the sample listener when done
   controller.removeListener(listener);
