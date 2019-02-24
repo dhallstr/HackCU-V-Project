@@ -10,6 +10,7 @@ class HandSignalCollection {
       bool remove(int i);
       bool remove(std::string &name);
       std::string getName(int i);
+      std::string getCommand(int i);
 
       friend class EventListener;
       friend std::ostream &operator<<(std::ostream &os, const HandSignalCollection &hsc);

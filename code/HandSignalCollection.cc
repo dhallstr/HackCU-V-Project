@@ -188,6 +188,10 @@ std::string HandSignalCollection::getName(int i) {
   return names[i];
 }
 
+std::string HandSignalCollection::getCommand(int i) {
+  return commands[i];
+}
+
 ostream &operator<<(ostream &os, const HandSignalCollection &hsc) {
     for (int i = 0; i < hsc.signals.size(); i++) {
         os << "Signal " << i << ": " << hsc.names[i] << " (" << hsc.getNumFingers(i) << " fingers)\n";
