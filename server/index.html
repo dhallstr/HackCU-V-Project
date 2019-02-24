@@ -3,8 +3,10 @@
   <title>Home Automation Demo</title>
 </head>
 <body onload="init();">
-<img id="source"
-       src="images/off.png"/>
+<img id="off_light"
+       src="images/off.png" style="display:none;"/>
+       <img id="on_light"
+       src="images/on.png" style="display:none;"/>
     <canvas id="home-demo" style="padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;">HTML Canvas is not suppported by your browser. Please use Google Chrome or Firefox.</canvas>
     <script type="text/javascript">
     var canvas=document.getElementById('home-demo');
@@ -110,7 +112,7 @@
     function drawRoom() {
         drawRoomBase();
     }
-    var doorOpen = false;
+    var doorOpen = false, lampOn = false;
     function drawRoomBase()  {
         
         drawRect(BORDERCOLOR, 90, 18, WINDOWWIDTH - 90 * 2 - 110 - 45, 18, false);// upper wall
@@ -146,8 +148,12 @@
         ctx.closePath();
         ctx.stroke();
         smallText(doorOpen ? "Unlocked" : "Locked", BLACK, WINDOWWIDTH - 90 - 45 - 65 - 20, 18 + 40, 'center');
+        
+        
+        ctx.drawImage(lampOn ? on_img : off_img, WINDOWWIDTH/2-25, WINDOWHEIGHT/2-35, 50, 70);
+        
     }
-    
+    var on_img, off_img;
     function init()
     {
       var ws = new WebSocket("ws://localhost:9001/");
@@ -158,7 +164,13 @@
             doorOpen = true;
         else if(v == "closeDoor")
             doorOpen = false;
+        else if (v == "lampOn")
+            lampOn = true;
+        else if (v == "lampOff")
+            lampOn = false;
       };
+      on_img = document.getElementById('on_light');
+      off_img = document.getElementById('off_light');
       main();
     }
   </script>

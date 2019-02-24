@@ -15,4 +15,4 @@ def test():
 def sendFile(filepath="index.html"):
 	return static_file(filepath, root='')
 
-run(host='localhost', port=8080, debug=True)
+run(host='192.168.1.3', port=8080, debug=True)
