@@ -181,12 +181,12 @@ std::string HandSignalCollection::getName(int i) {
 }
 
 ostream &operator<<(ostream &os, const HandSignalCollection &hsc) {
-    for (int i = 0; i < signals.size(); i++) {
+    for (int i = 0; i < hsc.signals.size(); i++) {
         int numFingers = 0;
-        for (int j = 0; j < fingers; j++) {
+        for (int j = 0; j < hsc.signals[i].fingers; j++) {
             if (signals[i].fingerExtended[j]) numFingers++;
         }
-        os << "Signal " << i << ": " << names[i] << " (" << numFingers << " fingers)\n";
+        os << "Signal " << i << ": " << hsc.names[i] << " (" << numFingers << " fingers)\n";
     }
     return os;
 }
