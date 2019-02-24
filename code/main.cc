@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <vector>
 #include <chrono>
+#include <stdlib.h> // :( for system()
 
 #include "Leap.h"
 #include "main.h"
@@ -15,8 +16,6 @@ using namespace Leap;
 
 static int mode = 0;
 static HandSignalCollection gestureCollection;
-static long last_call = 0;
-static int last_command_id = -1;
 
 ostream &operator<<(ostream &o, const FingerList &fingers)
 {
@@ -86,6 +85,9 @@ void EventListener::onExit(const Controller& controller) {
 }
 
 void EventListener::onFrame(const Controller& controller) {
+  static long last_call = 0;
+  static int last_command_id = -1;
+  static string commStr = "";
   if (mode == 0)
     return;
   // Get the most recent frame and report some basic information
@@ -113,17 +115,33 @@ void EventListener::onFrame(const Controller& controller) {
       int errorCode = 0;
       bool success = h.matchesSignal(hand, errorCode);
       if(DEBUG > 1) cout << " " << (success ? "Yes" : "No") << ", code:  " << errorCode << endl;
-      if(success && last_call + 3000 < currTime() && last_command_id != i)
+      if(success && ((last_call + 200 < currTime() && last_command_id != i) || (last_call + 2000 < currTime())))
       {
         cout << "[Listener] Gesture " << gestureCollection.getName(i) << " triggered!" << endl;
-        last_call = currTime();
-        last_command_id = i;
-        //sleep(1);
-        return;
+        string nextPart = gestureCollection.getCommand(i);
+        if (nextPart[0] == '$' && last_command_id != i) // just a modifier
+        {
+          commStr += nextPart.substr(1) + "_";
+          last_call = currTime();
+          last_command_id = i;
+        }
+        else if(nextPart[0] != '$') // actually execute!
+        {
+          commStr += nextPart;
+          last_call = currTime();
+          last_command_id = i;
+          // exec call
+          string temp = "./" + commStr + " >& /dev/null";
+          if(system(temp.c_str()) != 0)
+            cout << "No such command " << commStr << "!" << endl;
+          else
+            cout << "Ran command " << commStr <<  "!" << endl;
+          commStr = "";
+          return;
+        }
       }
       i++;
     }
-    last_command_id = -1;
   }
   else if(mode == 2)
   {
