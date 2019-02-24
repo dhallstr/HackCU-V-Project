@@ -64,8 +64,8 @@ bool HandSignal::isValid() const {
     return fingers > 0;
 }
 
-float percentDiff(float base, float val) {
-    return abs(val - base) / base;
+float valueDiff(float base, float val) {
+    return abs(val - base);
 }
 
 bool HandSignal::matchesSignal(const FingerList &curr_fingers, int &errorcode) const {
@@ -90,13 +90,13 @@ bool HandSignal::matchesSignal(const FingerList &curr_fingers, int &errorcode) c
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
             for (int w = 0; w < 2; w++) {
-                if (percentDiff(boneStarts[i][b][w], bone.prevJoint()[w] + offset[w]) < settings.positionPercent) {
+                if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] + offset[w]) < settings.positionDiff) {
                     return false;
                 }
-                if (percentDiff(boneEnds[i][b][w], bone.nextJoint()[w] + offset[w]) < settings.positionPercent) {
+                if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] + offset[w]) < settings.positionDiff) {
                     return false;
                 }
-                if (percentDiff(boneDirs[i][b][w], bone.direction()[w]) < settings.directionPercent) {
+                if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) < settings.directionDiff) {
                     return false;
                 }
             }
