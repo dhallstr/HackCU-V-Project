@@ -18,13 +18,13 @@ HandSignal::HandSignal(const queue<Hand> &list) {
         fingers = 0;
         return;
     }
-    if (list[0].fingers().count() > 20) {
+    if (list.front().fingers().count() > 20) {
         fingers = 0;
         return;
     }
 
-    fingers = list[0].fingers().count();
-    cout << "[HandSignals] data received: " << list[list.size() - 1].fingers() << endl;
+    fingers = list.front().fingers().count();
+    cout << "[HandSignals] data received: " << list.back().fingers() << endl;
 
     for (int i = 0; i < fingers; i++) {
         fingerLengths[i] = 0;
