@@ -56,8 +56,27 @@ HandSignal::HandSignal(const vector<FingerList> &list) {
                 }
             }
         }
-        
     }
+}
+
+ostream &operator<<(ostream &os, const HandSignal &hs) {
+    if (fingers == 0) return os << "Invalid HandSignal";
+    
+    for (int i = 0; i < fingers; i++) {
+      os << string(4, ' ') <<  fingerNames[fingerTypes[i]]
+                << " finger, id: " << i
+                << ", length: " << fingerLengths[i]
+                << "mm" << endl;
+
+      // Get finger bones
+      for (int b = 0; b < 4; ++b) {
+        os << string(6, ' ') <<  "unknown"
+                  << " bone, start: (" << boneStarts[i][b][0] << ", " << boneStarts[i][b][1] << ", " << boneStarts[i][b][2] << ")"
+                  << ", end: (" << boneEnds[i][b][0] << ", " << boneEnds[i][b][1] << ", " << boneEnds[i][b][2] << ")"
+                  << ", direction: (" << boneDirs[i][b][0] << ", " << boneDirs[i][b][1] << ", " << boneDirs[i][b][2] << ")" << endl;
+      }
+    }
+    return os;
 }
 
 bool HandSignal::isValid() const {
