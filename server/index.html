@@ -166,10 +166,14 @@
             doorOpen = true;
         else if(v == "closeDoor")
             doorOpen = false;
-        else if (v == "lampOn")
+        else if (v == "lampOn") {
             lampOn = true;
-        else if (v == "lampOff")
+            lampRed = false;
+            }
+        else if (v == "lampOff") {
             lampOn = false;
+            lampRed = false;
+        }
         else if (v == "lampRed")
             lampRed = true;
       };
