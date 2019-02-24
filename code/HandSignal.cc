@@ -22,6 +22,8 @@ HandSignal::HandSignal(const vector<Hand> &list) {
         return;
     }
     
+    fingers = list[0].fingers().count();
+    
     for (int i = 0; i < fingers; i++) {
         fingerLengths[i] = 0;
         fingerExtended[i] = false;
@@ -34,7 +36,7 @@ HandSignal::HandSignal(const vector<Hand> &list) {
         }
     }
     
-    fingers = list[0].fingers().count();
+    
     int ind = -1;
     for (Hand hand : list) {
         ind++;
