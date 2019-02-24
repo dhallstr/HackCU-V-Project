@@ -179,3 +179,14 @@ bool HandSignalCollection::remove(std::string &name) {
 std::string HandSignalCollection::getName(int i) {
   return names[i];
 }
+
+ostream &operator<<(ostream &os, const HandSignalCollection &hsc) {
+    for (int i = 0; i < signals.size(); i++) {
+        int numFingers = 0;
+        for (int j = 0; j < fingers; j++) {
+            if (signals[i].fingerExtended[j]) numFingers++;
+        }
+        os << "Signal " << i << ": " << names[i] << " (" << numFingers << " fingers)\n";
+    }
+    return os;
+}

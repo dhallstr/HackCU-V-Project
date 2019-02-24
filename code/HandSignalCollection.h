@@ -12,6 +12,7 @@ class HandSignalCollection {
       std::string getName(int i);
 
       friend class EventListener;
+      friend ostream &operator<<(ostream &os, const HandSignalCollection &hsc);
       friend int main(int argc, const char* argv[]);
 
     private:
