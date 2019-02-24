@@ -26,7 +26,7 @@ HandSignal::HandSignal(const Hand &hand) {
         return;
     }
 
-    fingers = lhand.fingers().count();
+    fingers = hand.fingers().count();
     if(DEBUG > 2) cout << "[HandSignals] data received:\n" << hand.fingers() << endl;
 
     for (int i = 0; i < fingers; i++) {
@@ -42,11 +42,6 @@ HandSignal::HandSignal(const Hand &hand) {
     }
 
     FingerList fl = hand.fingers();
-    if (fl.count() != fingers) {
-        if(DEBUG > 0) cout << "[ERROR] inconsistent number of fingers at frame " << ind << ": expected: " << fingers << " got: " << fl.count() << endl;
-        fingers = 0;
-        return;
-    }
     int i = 0;
     for (FingerList::const_iterator fl_iter = fl.begin(); fl_iter != fl.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;

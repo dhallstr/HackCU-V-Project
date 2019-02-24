@@ -17,8 +17,8 @@ typedef struct sensitivityConfig_s {
 class HandSignal {
     public:
         HandSignal() = default;
-        HandSignal(const Hand &hand);
-        HandSignal(const Hand &hand, sensitivity_t config);
+        HandSignal(const Leap::Hand &hand);
+        HandSignal(const Leap::Hand &hand, sensitivity_t config);
         HandSignal(const HandSignal &other);
 
         bool matchesSignal(const Leap::Hand &curr_fingers, int &errorcode) const;

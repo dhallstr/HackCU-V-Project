@@ -2,7 +2,6 @@
 #include <fstream>
 #include <cstring>
 #include <unistd.h>
-#include <deque>
 #include <vector>
 
 #include "Leap.h"
@@ -96,10 +95,6 @@ void EventListener::onFrame(const Controller& controller) {
 
   // Get fingers
   sensitivity_t s = {50, 60, 0.6};
-  static deque<Hand> currentGesture;
-  currentGesture.push_back(hand);
-  if(currentGesture.size() == 50) // keep the vector at constant size
-    currentGesture.pop_front();
 
   if(mode == 1) // normal operation
   {
@@ -123,7 +118,7 @@ void EventListener::onFrame(const Controller& controller) {
     // Send the vector to train
     if(DEBUG > 2) cout << "[Listener] Sending training vector!" << endl;
     if(DEBUG > 2) cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
-    HandSignal hs(currentGesture, s);
+    HandSignal hs(hand , s);
     cout << "Saw extended fingers: " << hand.fingers().extended().count() << endl;
     string gname, gcomm;
     cout << "Enter name for new gesture: ";

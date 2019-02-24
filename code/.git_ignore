@@ -2,3 +2,4 @@ main
 main.dSYM
 .DS_Store
 ../.DS_Store
+trained_signals.gs
