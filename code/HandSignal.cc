@@ -16,7 +16,7 @@ HandSignal::HandSignal(const vector<Hand> &list, sensitivity_t config) : HandSig
 }
 
 HandSignal::HandSignal(const vector<Hand> &list) {
-
+    cout << "[HandSignal] handSignal ctor called!" << endl;
     if (list[0].fingers().count() > 20) {
         fingers = 0;
         return;
