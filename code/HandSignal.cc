@@ -115,15 +115,15 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
             for (int w = 0; w < 2; w++) {
-                if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] + offset[w]) < settings.positionDiff) {
+                if (valueDiff(boneStarts[i][b][w], bone.prevJoint()[w] + offset[w]) > settings.positionDiff) {
                     errorcode = 4;
                     return false;
                 }
-                if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] + offset[w]) < settings.positionDiff) {
+                if (valueDiff(boneEnds[i][b][w], bone.nextJoint()[w] + offset[w]) > settings.positionDiff) {
                     errorcode = 5;
                     return false;
                 }
-                if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) < settings.directionDiff) {
+                if (valueDiff(boneDirs[i][b][w], bone.direction()[w]) > settings.directionDiff) {
                     errorcode = 6;
                     return false;
                 }
