@@ -10,9 +10,9 @@ using namespace std;
 
 
 HandSignal::HandSignal(const vector<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
-    
+
 HandSignal::HandSignal(const vector<Hand> &list) {
-    
+
     if (list[0].fingers().count() > 20) {
         fingers = 0;
         return;
@@ -35,15 +35,15 @@ HandSignal::HandSignal(const vector<Hand> &list) {
             for (int b = 0; b < 4; ++b) {
                 Bone::Type boneType = static_cast<Bone::Type>(b);
                 Bone bone = finger.bone(boneType);
-                
+
                 boneStarts[i][b][0] += bone.prevJoint().x;
                 boneStarts[i][b][1] += bone.prevJoint().y;
                 boneStarts[i][b][2] += bone.prevJoint().z;
-                
+
                 boneEnds[i][b][0] += bone.nextJoint().x;
                 boneEnds[i][b][1] += bone.nextJoint().y;
                 boneEnds[i][b][2] += bone.nextJoint().z;
-                
+
                 boneDirs[i][b][0] += bone.direction().x;
                 boneDirs[i][b][1] += bone.direction().y;
                 boneDirs[i][b][2] += bone.direction().z;
@@ -66,16 +66,15 @@ HandSignal::HandSignal(const vector<Hand> &list) {
 
 ostream &operator<<(ostream &os, const HandSignal &hs) {
     if (hs.fingers == 0) return os << "Invalid HandSignal";
-    
+
     for (int i = 0; i < hs.fingers; i++) {
       os << string(4, ' ') <<  fingerNames[hs.fingerTypes[i]]
-                << " finger, id: " << i
-                << ", length: " << hs.fingerLengths[i]
+                << " finger, length: " << hs.fingerLengths[i]
                 << "mm" << endl;
 
       // Get finger bones
       for (int b = 0; b < 4; ++b) {
-        os << string(6, ' ') <<  "unknown"
+        os << string(6, ' ') <<  boneNames[static_cast<Bone::Type>(b)]
                   << " bone, start: (" << hs.boneStarts[i][b][0] << ", " << hs.boneStarts[i][b][1] << ", " << hs.boneStarts[i][b][2] << ")"
                   << ", end: (" << hs.boneEnds[i][b][0] << ", " << hs.boneEnds[i][b][1] << ", " << hs.boneEnds[i][b][2] << ")"
                   << ", direction: (" << hs.boneDirs[i][b][0] << ", " << hs.boneDirs[i][b][1] << ", " << hs.boneDirs[i][b][2] << ")" << endl;
@@ -132,5 +131,5 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
         }
     }
     return true;
-    
+
 }
