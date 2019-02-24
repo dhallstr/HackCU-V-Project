@@ -5,12 +5,11 @@ class HandSignalCollection {
     public:
       HandSignalCollection();
       bool save();
-      void exec(int i) const;
       bool add(HandSignal &hs, std::string &name, std::string &command);
       bool remove(int i);
       bool remove(std::string &name);
-      std::string getName(int i);
-      std::string getCommand(int i);
+      std::string getName(int i) const;
+      std::string getCommand(int i) const;
 
       friend class EventListener;
       friend std::ostream &operator<<(std::ostream &os, const HandSignalCollection &hsc);

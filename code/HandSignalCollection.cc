@@ -141,10 +141,6 @@ bool HandSignalCollection::save() {
     return false;
 }
 
-void HandSignalCollection::exec(int i) const {
-    // TODO exec command
-}
-
 bool HandSignalCollection::add(HandSignal &hs, std::string &name, std::string &command) {
     signals.push_back(hs);
     names.push_back(name);
@@ -184,11 +180,11 @@ int HandSignalCollection::getNumFingers(int i) const {
     return numFingers;
 }
 
-std::string HandSignalCollection::getName(int i) {
+std::string HandSignalCollection::getName(int i) const {
   return names[i];
 }
 
-std::string HandSignalCollection::getCommand(int i) {
+std::string HandSignalCollection::getCommand(int i) const {
   return commands[i];
 }
 
