@@ -3,6 +3,7 @@
 #include <cstring>
 #include <unistd.h>
 #include <vector>
+#include <chrono>
 
 #include "Leap.h"
 #include "main.h"
@@ -14,6 +15,8 @@ using namespace Leap;
 
 static int mode = 0;
 static HandSignalCollection gestureCollection;
+static long last_call = 0;
+static int last_command_id = -1;
 
 ostream &operator<<(ostream &o, const FingerList &fingers)
 {
@@ -38,6 +41,10 @@ ostream &operator<<(ostream &o, const FingerList &fingers)
     }
   }
   return o;
+}
+
+long currTime() {
+    return (chrono::duration_cast< chrono::milliseconds >(chrono::system_clock::now().time_since_epoch()).count();
 }
 
 
@@ -106,13 +113,17 @@ void EventListener::onFrame(const Controller& controller) {
       int errorCode = 0;
       bool success = h.matchesSignal(hand, errorCode);
       if(DEBUG > 1) cout << " " << (success ? "Yes" : "No") << ", code:  " << errorCode << endl;
-      if(success)
+      if(success && last_call + 3000 < currTime() && last_command_id != i)
       {
         cout << "[Listener] Gesture " << gestureCollection.getName(i) << " triggered!" << endl;
-        sleep(1);
+        last_call = currTime();
+        last_command_id = i;
+        //sleep(1);
+        return;
       }
       i++;
     }
+    last_command_id = -1;
   }
   else if(mode == 2)
   {
