@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
-#include <que>
+#include <deque>
 #include "Leap.h"
 #include "HandSignal.h"
 
