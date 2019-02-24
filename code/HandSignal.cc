@@ -52,18 +52,18 @@ HandSignal::HandSignal(const Hand &hand) {
         for (int b = 0; b < 4; ++b) {
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
-            
+
             if (b == 0) {
                 offset[0] = bone.prevJoint().x;
                 offset[1] = bone.nextJoint().y;
                 offset[2] = bone.direction().z;
             }
-            
+
             for (int w = 0; w < 3; w++) {
                 boneStarts[i][b][w] = bone.prevJoint()[w];
                 boneEnds[i][b][w] = bone.nextJoint()[w];
                 boneDirs[i][b][w] = bone.direction()[w];
-                
+
                 boneStarts[i][b][w] -= offset[w];
                 boneEnds[i][b][w] -= offset[w];
             }
