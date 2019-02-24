@@ -79,7 +79,7 @@ bool HandSignal::matchesSignal(const FingerList &curr_fingers, int &errorcode) c
         return false;
     }
     int i = 0;
-    Vector first = curr_fingers[static_cast<Bone::Type>(0)].bone(0).prevJoint();
+    Vector first = curr_fingers[0].bone(static_cast<Bone::Type>(0)).prevJoint();
     float offset[] = {-first.x, -first.y, -first.z};
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
