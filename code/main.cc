@@ -170,7 +170,7 @@ int main(int argc, const char* argv[])
   while (running)
   {
     string command = "";
-    cout << "Typey >" << endl;
+    cout << "Typey > ";
     cin >> command;
     if (command.compare("exit") == 0)
     {
