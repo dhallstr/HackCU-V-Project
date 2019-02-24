@@ -1,6 +1,9 @@
 #ifndef HandSignalCollectionH
 #define HandSignalCollectionH
 
+#include "main.h"
+#include "HandSignal.h"
+
 class HandSignalCollection {
     public:
       HandSignalCollection();
