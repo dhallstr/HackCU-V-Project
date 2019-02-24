@@ -89,8 +89,8 @@ void EventListener::onFrame(const Controller& controller) {
 
   //cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
   HandList hands = frame.hands();
-  if(hands.count() < 1)
-    return;
+  //if(hands.count() < 1)
+  //  return;
   // Get the first hand
   const Hand hand = *hands.begin();
   string handType = hand.isLeft() ? "Left hand" : "Right hand";
@@ -112,13 +112,15 @@ void EventListener::onFrame(const Controller& controller) {
 
   if(mode == 1) // normal operation
   {
+    int i = 0;
     for(const HandSignal &h : gestureBank)
     {
       // send the hand be to processed
-      cout << "[Listener] Match? ";
+      cout << "[Listener] Signal " << i << ": match? ";
       int errorCode = 0;
       string success = (h.matchesSignal(hand, errorCode)) ? "Yes" : "No" ;
       cout << " " << success << ", code:  " << errorCode << endl;
+      i++;
     }
   }
   else if(mode == 2)
@@ -127,7 +129,6 @@ void EventListener::onFrame(const Controller& controller) {
     cout << "[Listener] Sending training vector!" << endl;
     cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
     HandSignal h(currentGesture, s);
-    gestureBank.clear();
     gestureBank.push_back(h);
     cout << "[Listener] HandSignal is:\n" << h << endl;
     mode = 0; // exit training mode
