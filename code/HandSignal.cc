@@ -48,7 +48,7 @@ HandSignal::HandSignal(const Hand &hand) {
         fingerTypes[i] = finger.type();
         fingerExtended[i] = finger.isExtended();
         fingerLengths[i] += finger.length();
-        for (int b = 3; b >= 0; ++b) {
+        for (int b = 3; b >= 0; --b) {
             Bone::Type boneType = static_cast<Bone::Type>(b);
             Bone bone = finger.bone(boneType);
             
