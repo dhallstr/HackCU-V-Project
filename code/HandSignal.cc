@@ -104,7 +104,7 @@ bool HandSignal::matchesSignal(const Hand &hand, int &errorcode) const {
         return false;
     }
     int i = 0;
-    Vector first = curr_fingers[0].bone(static_cast<Bone::Type>(0)).prevJoint();
+    Vector first = hand.palmPosition();
     float offset[] = {-first.x, -first.y, -first.z};
     for (FingerList::const_iterator fl_iter = curr_fingers.begin(); fl_iter != curr_fingers.end(); ++fl_iter, i++) {
         const Finger finger = *fl_iter;
