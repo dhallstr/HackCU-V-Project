@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
-#include <queue>
+#include <que>
 #include "Leap.h"
 #include "HandSignal.h"
 
@@ -10,9 +10,9 @@ using namespace std;
 
 
 
-HandSignal::HandSignal(const dequeue<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
+HandSignal::HandSignal(const deque<Hand> &list, sensitivity_t config) : HandSignal(list) { settings = config; }
 
-HandSignal::HandSignal(const dequeue<Hand> &list) {
+HandSignal::HandSignal(const deque<Hand> &list) {
     cout << "[HandSignal] handSignal ctor called!" << endl;
     if (list.size() == 0) {
         cout << "[HandSignal] ERROR: no Hands passed" << endl;
