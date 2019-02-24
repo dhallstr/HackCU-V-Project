@@ -1,7 +1,9 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
-#include <vector>
 #include <unistd.h>
+#include <deque>
+#include <vector>
 
 #include "Leap.h"
 #include "main.h"
@@ -56,11 +58,11 @@ class EventListener : public Listener {
 };
 
 void EventListener::onInit(const Controller& controller) {
-  cout << "[Controller] Initialized" << endl;
+  if(DEBUG > 1) cout << "[Controller] Initialized" << endl;
 }
 
 void EventListener::onConnect(const Controller& controller) {
-  cout << "[Controller] Connected" << endl;
+  if(DEBUG > 0) cout << "[Controller] Connected" << endl;
   //controller.enableGesture(Gesture::TYPE_CIRCLE);
   //controller.enableGesture(Gesture::TYPE_KEY_TAP);
   //controller.enableGesture(Gesture::TYPE_SCREEN_TAP);
@@ -69,11 +71,11 @@ void EventListener::onConnect(const Controller& controller) {
 
 void EventListener::onDisconnect(const Controller& controller) {
   // Note: not dispatched when running in a debugger.
-  cout << "[Controller] Disconnected" << endl;
+  if(DEBUG > 0) cout << "[Controller] Disconnected" << endl;
 }
 
 void EventListener::onExit(const Controller& controller) {
-  cout << "[Controller] Exited" << endl;
+  if(DEBUG > 1) cout << "[Controller] Exited" << endl;
 }
 
 void EventListener::onFrame(const Controller& controller) {
@@ -81,35 +83,35 @@ void EventListener::onFrame(const Controller& controller) {
     return;
   // Get the most recent frame and report some basic information
   const Frame frame = controller.frame();
-  /*cout << "Frame id: " << frame.id()
+  /*if(DEBUG > 1) cout << "Frame id: " << frame.id()
             << ", timestamp: " << frame.timestamp()
             << ", hands: " << frame.hands().count()
             << ", extended fingers: " << frame.fingers().extended().count()
             << ", tools: " << frame.tools().count()
             << ", gestures: " << frame.gestures().count() << endl;*/
 
-  //cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
+  //if(DEBUG > 1) cout << "hands: " << frame.hands().count() << ", fingers: " << frame.fingers().extended().count() << endl;
   HandList hands = frame.hands();
   if(hands.count() < 1)
     return;
   // Get the first hand
   const Hand hand = *hands.begin();
   string handType = hand.isLeft() ? "Left hand" : "Right hand";
-  cout << "[Listener] " << handType << " pos: " << hand.palmPosition() << ", extended fingers: " << hand.fingers().extended().count() << endl;
+  if(DEBUG > 1) cout << "[Listener] " << handType << " pos: " << hand.palmPosition() << ", extended fingers: " << hand.fingers().extended().count() << endl;
   // Get the hand's normal vector and direction
   //const Vector normal = hand.palmNormal();
   //const Vector direction = hand.direction();
   // Calculate the hand's pitch, roll, and yaw angles
-  /*cout << string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
+  /*if(DEBUG > 1) cout << string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
             << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
             << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << endl;*/
 
   // Get fingers
-  sensitivity_t s = {40, 60, 0.6};
-  static vector<Hand> currentGesture;
+  sensitivity_t s = {50, 60, 0.6};
+  static deque<Hand> currentGesture;
   currentGesture.push_back(hand);
-  if(currentGesture.size() == 50) // keep the vector at size 50
-    currentGesture.erase(currentGesture.begin());
+  if(currentGesture.size() == 50) // keep the vector at constant size
+    currentGesture.pop_front();
 
   if(mode == 1) // normal operation
   {
@@ -117,52 +119,58 @@ void EventListener::onFrame(const Controller& controller) {
     for(const HandSignal &h : gestureBank)
     {
       // send the hand be to processed
-      cout << "[Listener] Signal " << i << ": match? ";
+      if(DEBUG > 1) cout << "[Listener] Signal " << i << ": match? ";
       int errorCode = 0;
-      string success = (h.matchesSignal(hand, errorCode)) ? "Yes" : "No" ;
-      cout << " " << success << ", code:  " << errorCode << endl;
+      bool success = h.matchesSignal(hand, errorCode);
+      if(DEBUG > 1) cout << " " << (success ? "Yes" : "No") << ", code:  " << errorCode << endl;
+      if(success)
+      {
+        cout << "[Listener] Gesture " << i << " triggered!" << endl;
+      }
       i++;
     }
   }
   else if(mode == 2)
   {
     // Send the vector to train
-    cout << "[Listener] Sending training vector!" << endl;
-    cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
+    if(DEBUG > 2) cout << "[Listener] Sending training vector!" << endl;
+    if(DEBUG > 2) cout << "[Listener] Last seen Hand was:\n" << hand.fingers() << endl;
     HandSignal h(currentGesture, s);
     gestureBank.push_back(h);
-    cout << "[Listener] HandSignal is:\n" << h << endl;
+    if(DEBUG > 2) cout << "[Listener] HandSignal is:\n" << h << endl;
+    cout << "Saved gesture with extended fingers: " << hand.fingers().extended().count() << endl;
     mode = 0; // exit training mode
   }
 }
 
 void EventListener::onFocusGained(const Controller& controller) {
-  cout << "[Controller] Focus Gained" << endl;
+  if(DEBUG > 0) cout << "[Controller] Focus Gained" << endl;
 }
 
 void EventListener::onFocusLost(const Controller& controller) {
-  cout << "[Controller] Focus Lost" << endl;
+  if(DEBUG > 0) cout << "[Controller] Focus Lost" << endl;
 }
 
 void EventListener::onDeviceChange(const Controller& controller) {
-  cout << "[Controller] Device Changed" << endl;
+  if(DEBUG > 1) cout << "[Controller] Device Changed" << endl;
   const DeviceList devices = controller.devices();
 
   for (int i = 0; i < devices.count(); ++i) {
-    cout << "[Controller] ID: " << devices[i].toString();
-    cout << ", Streaming: " << (devices[i].isStreaming() ? "true" : "false") << endl;
+    if(DEBUG > 1) cout << "[Controller] ID: " << devices[i].toString();
+    if(DEBUG > 1) cout << ", Streaming: " << (devices[i].isStreaming() ? "true" : "false") << endl;
   }
 }
 
 void EventListener::onServiceConnect(const Controller& controller) {
-  cout << "[Controller] Service Connected" << endl;
+  if(DEBUG > 0) cout << "[Controller] Service Connected" << endl;
 }
 
 void EventListener::onServiceDisconnect(const Controller& controller) {
-  cout << "[Controller] Service Disconnected" << endl;
+  if(DEBUG > 0) cout << "[Controller] Service Disconnected" << endl;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, const char* argv[])
+{
   // Create a sample listener and controller
   EventListener listener;
   Controller controller;
@@ -174,9 +182,8 @@ int main(int argc, char** argv) {
   while (running)
   {
     int command = 0;
-    cout << "\t\t0. exit \t 1. run \t 2. train" << endl;
+    cout << "0. exit \t 1. run \t 2. pause \t 3. add gesture" << endl;
     cin >> command;
-    cin.get();
     switch(command)
     {
       case 0:
@@ -184,18 +191,28 @@ int main(int argc, char** argv) {
       break;
       case 1:
         mode = 1;
-        cout << "[System] Running!" << endl;
-        cin.get();
-        mode = 0;
+        cout << "Running" << endl;
       break;
       case 2:
-        cout << "[System] Training..." << endl;
+        mode = 0;
+        cout << "Paused" << endl;
+      break;
+      case 3:
+        string gname, gcomm;
+        cout << "Enter name for new gesture: ";
+        cin >> gname;
+        cout << "Enter script name: ";
+        cin >> gcomm;
+        cin.get();
+        cout << "Prepare gesture, and press enter...";
+        cin.get();
+        cout << "Training..." << endl;
         sleep(1);
         mode = 2;
-        while(mode == 2);
+        while(mode == 2); // handler will change mode
+        cout << "Done!" << endl;
       break;
     }
-    cout << "[System] Done!" << endl;
   }
 
   cout << "[System] Exiting..." << endl;
